@@ -14,16 +14,20 @@ but WITHOUT ANY WARRANTY.
 #include "Dependencies\freeglut.h"
 
 #include "Renderer.h"
+#include "Object.h"
 
 Renderer *g_Renderer = NULL;
+
+CObject Obj("ABC", 100, 10);
 
 void RenderScene(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
 
-	// Renderer Test
-	g_Renderer->DrawSolidRect(0, 0, 0, 4, 1, 0, 1, 1);
+	// x, y, z, size, r, g, b, a (왼쪽 위는 (-250, 250) 이다.)
+	g_Renderer->DrawSolidRect(Obj.GetPos().fX, Obj.GetPos().fY, Obj.GetPos().fZ, Obj.GetSize(),
+		Obj.GetColor().fR, Obj.GetColor().fG, Obj.GetColor().fB, Obj.GetColor().fA);
 
 	glutSwapBuffers();
 }
@@ -74,6 +78,12 @@ int main(int argc, char **argv)
 		std::cout << "Renderer could not be initialized.. \n";
 	}
 
+	// Set Object 
+	Obj.SetPos(100.f, 0.f);
+	Obj.SetSize(100.f);
+	Obj.SetColor(1.f, 1.f, 1.f, 1.f);
+	//
+
 	glutDisplayFunc(RenderScene);
 	glutIdleFunc(Idle);
 	glutKeyboardFunc(KeyInput);
@@ -84,6 +94,6 @@ int main(int argc, char **argv)
 
 	delete g_Renderer;
 
-    return 0;
+	return 0;
 }
 

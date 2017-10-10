@@ -1,8 +1,2 @@
-﻿  stdafx.cpp
-  SimpleGame.cpp
-  Renderer.cpp
-c:\users\강진우\desktop\3학년 2학기\게임 소프트웨어 공학\main\gse_kangjinwoo_1_2012182002\simplegame\simplegame\renderer.cpp(63): warning C4267: '=': 'size_t'에서 'GLint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Object.cpp
-  코드를 생성하고 있습니다...
-  SimpleGame.vcxproj -> C:\Users\강진우\Desktop\3학년 2학기\게임 소프트웨어 공학\Main\GSE_KANGJINWOO_1_2012182002\SimpleGame\x64\Debug\SimpleGame.exe
-  SimpleGame.vcxproj -> C:\Users\강진우\Desktop\3학년 2학기\게임 소프트웨어 공학\Main\GSE_KANGJINWOO_1_2012182002\SimpleGame\x64\Debug\SimpleGame.pdb (Partial PDB)
+﻿  SimpleGame.vcxproj -> C:\Users\강진우\Documents\GitHub\GSE_KANGJINWOO_1_2012182002\SimpleGame\x64\Debug\SimpleGame.exe
+  SimpleGame.vcxproj -> C:\Users\강진우\Documents\GitHub\GSE_KANGJINWOO_1_2012182002\SimpleGame\x64\Debug\SimpleGame.pdb (Partial PDB)
