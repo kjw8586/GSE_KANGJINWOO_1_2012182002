@@ -29,6 +29,8 @@ void RenderScene(void)
 	g_Renderer->DrawSolidRect(Obj.GetPos().fX, Obj.GetPos().fY, Obj.GetPos().fZ, Obj.GetSize(),
 		Obj.GetColor().fR, Obj.GetColor().fG, Obj.GetColor().fB, Obj.GetColor().fA);
 
+	Obj.Update();
+
 	glutSwapBuffers();
 }
 
@@ -79,7 +81,8 @@ int main(int argc, char **argv)
 	}
 
 	// Set Object 
-	Obj.SetPos(100.f, 0.f);
+	Obj.Init();
+	Obj.SetPos(200.f, 200.f);
 	Obj.SetSize(100.f);
 	Obj.SetColor(1.f, 1.f, 1.f, 1.f);
 	//

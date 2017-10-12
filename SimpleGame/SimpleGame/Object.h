@@ -10,7 +10,7 @@ public:
 	~CObject(void);
 
 private:
-	struct POS
+	struct VECTOR
 	{
 		float fX;
 		float fY;
@@ -30,22 +30,30 @@ private:
 	int		m_iHp;
 	int		m_iAtt;
 	float	m_fSize;
-	POS		m_Pos;
+	VECTOR	m_Pos;
 	COLOR	m_Color;
+
+private:
+	float	m_fSpeed;
+	VECTOR	m_Dir;
+
+public:
+	void	Init();
+	void	Update();
 
 public:
 	float	GetSize() { return m_fSize; }
-	POS		GetPos() { return m_Pos; }
+	VECTOR	GetPos() { return m_Pos; }
 	COLOR	GetColor() { return m_Color; }
+	float	GetSpeed() { return m_fSpeed; }
+	VECTOR	GetDir() { return m_Dir; }
 
 public:
 	void	SetSize(float fSize);
 	void	SetPos(float fX, float fY, float fZ = 0.f);
 	void	SetColor(float fR, float fG, float fB, float fA);
+	void	SetSpeed(float fSpeed);
+	void	SetDir(float fDirX, float fDirY, float fDirZ);
 };
 
 #endif // Object_h__
-
-// 어떤 방식으로 하는지
-// 
-// 
