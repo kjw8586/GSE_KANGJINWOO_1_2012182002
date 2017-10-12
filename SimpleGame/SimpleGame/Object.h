@@ -36,6 +36,8 @@ private:
 private:
 	float	m_fSpeed;
 	VECTOR	m_Dir;
+	VECTOR	m_TargetPos;
+	bool	m_bLeftButtonDown;
 
 public:
 	void	Init();
@@ -47,6 +49,7 @@ public:
 	COLOR	GetColor() { return m_Color; }
 	float	GetSpeed() { return m_fSpeed; }
 	VECTOR	GetDir() { return m_Dir; }
+	bool	GetLeftButtonDown() { return m_bLeftButtonDown; }
 
 public:
 	void	SetSize(float fSize);
@@ -54,6 +57,8 @@ public:
 	void	SetColor(float fR, float fG, float fB, float fA);
 	void	SetSpeed(float fSpeed);
 	void	SetDir(float fDirX, float fDirY, float fDirZ);
+	void	SetTargetPos(float fTargetPosX, float fTargetPosY, float fTargetPosZ = 0.f);
+	void	SetLeftButtonDown(bool bLeftButtonDown);
 };
 
 #endif // Object_h__

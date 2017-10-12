@@ -16,6 +16,9 @@ but WITHOUT ANY WARRANTY.
 #include "Renderer.h"
 #include "Object.h"
 
+#define WINDOWX 500
+#define WINDOWY 500
+
 Renderer *g_Renderer = NULL;
 
 CObject Obj("ABC", 100, 10);
@@ -39,8 +42,24 @@ void Idle(void)
 	RenderScene();
 }
 
+//GLUT_LEFT_BUTTON, GLUT_MIDDLE_BUTTON, GLUT_RIGHT_BUTTON
+//GLUT_UP, GLUT_DOWN
 void MouseInput(int button, int state, int x, int y)
 {
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	{
+		Obj.SetLeftButtonDown(true);
+	}
+
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+	{
+		if (Obj.GetLeftButtonDown())
+		{
+			Obj.SetTargetPos(x - WINDOWX / 2, -y + WINDOWY / 2);
+			Obj.SetLeftButtonDown(false);
+		}
+	}
+
 	RenderScene();
 }
 
@@ -74,7 +93,7 @@ int main(int argc, char **argv)
 	}
 
 	// Initialize Renderer
-	g_Renderer = new Renderer(500, 500);
+	g_Renderer = new Renderer(WINDOWX, WINDOWY);
 	if (!g_Renderer->IsInitialized())
 	{
 		std::cout << "Renderer could not be initialized.. \n";
@@ -82,7 +101,7 @@ int main(int argc, char **argv)
 
 	// Set Object 
 	Obj.Init();
-	Obj.SetPos(200.f, 200.f);
+	Obj.SetPos(0.f, 0.f);
 	Obj.SetSize(100.f);
 	Obj.SetColor(1.f, 1.f, 1.f, 1.f);
 	//
