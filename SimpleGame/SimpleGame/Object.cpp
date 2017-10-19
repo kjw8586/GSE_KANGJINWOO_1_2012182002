@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "Object.h"
 
+CObject::CObject()
+{
+
+}
+
 CObject::CObject(char* szName, int iHp, int iAtt)
 	: m_iHp(iHp)
 	, m_iAtt(iAtt)
@@ -8,17 +13,17 @@ CObject::CObject(char* szName, int iHp, int iAtt)
 	strcpy_s(m_szName, sizeof(szName), szName);
 }
 
-CObject::~CObject(void)
+CObject::~CObject()
 {
 
 }
 
-void CObject::Init(void)
+void CObject::Init()
 {
 	m_fSpeed = 1.f;
 
 	m_Dir.fX = -1.f;
-	m_Dir.fY = 0.f;
+	m_Dir.fY = 1.f;
 	m_Dir.fZ = 0.f;
 
 	m_TargetPos.fX = 0.f;
@@ -32,10 +37,9 @@ void CObject::Update()
 {
 	float fTime = 0.2f;
 
-	m_Dir.fX = m_TargetPos.fX - m_Pos.fX;
-	m_Dir.fY = m_TargetPos.fY - m_Pos.fY;
-
-	//float fSizeVector = sqrtf(m_Dir.fX * m_Dir.fX + m_Dir.fY * m_Dir.fY);
+	// 마우스 연동
+	//m_Dir.fX = m_TargetPos.fX - m_Pos.fX;
+	//m_Dir.fY = m_TargetPos.fY - m_Pos.fY;
 
 	//m_Dir.fX /= fSizeVector;
 	//m_Dir.fY /= fSizeVector;
@@ -43,45 +47,17 @@ void CObject::Update()
 	m_Pos.fX += m_fSpeed * m_Dir.fX * fTime;
 	m_Pos.fY += m_fSpeed * m_Dir.fY * fTime;
 
-	//if (m_Pos.fX < -200.f)
-	//{
-	//	m_Pos.fX = -200.f;
 
-	//	m_Dir.fX = 0.f;
-	//	m_Dir.fY = -1.f;
 
-	//	SetColor(1.f, 0.f, 0.f, 1.f);
-	//}
+	if (m_Pos.fX < -250.f || m_Pos.fX > 250.f) 
+	{
+		m_Dir.fX *= -1.f;
+	}
 
-	//if (m_Pos.fX > 200.f)
-	//{
-	//	m_Pos.fX = 200.f;
-
-	//	m_Dir.fX = 0.f;
-	//	m_Dir.fY = 1.f;
-
-	//	SetColor(0.f, 0.f, 1.f, 1.f);
-	//}
-
-	//if (m_Pos.fY < -200.f)
-	//{
-	//	m_Pos.fY = -200.f;
-
-	//	m_Dir.fX = 1.f;
-	//	m_Dir.fY = 0.f;
-
-	//	SetColor(0.f, 1.f, 0.f, 1.f);
-	//}
-
-	//if (m_Pos.fY > 200.f)
-	//{
-	//	m_Pos.fY = 200.f;
-
-	//	m_Dir.fX = -1.f;
-	//	m_Dir.fY = 0.f;
-
-	//	SetColor(1.f, 1.f, 1.f, 1.f);
-	//}
+	if (m_Pos.fY < -250.f || m_Pos.fY > 250.f)
+	{
+		m_Dir.fY *= -1.f;
+	}
 }
 
 void CObject::SetSize(float fSize)

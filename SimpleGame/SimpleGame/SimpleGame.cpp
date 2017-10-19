@@ -15,24 +15,27 @@ but WITHOUT ANY WARRANTY.
 
 #include "Renderer.h"
 #include "Object.h"
+#include "SceneMgr.h"
 
 #define WINDOWX 500
 #define WINDOWY 500
 
 Renderer *g_Renderer = NULL;
 
-CObject Obj("ABC", 100, 10);
+CSceneMgr g_SceneMgr;
 
 void RenderScene(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
 
-	// x, y, z, size, r, g, b, a (왼쪽 위는 (-250, 250) 이다.)
-	g_Renderer->DrawSolidRect(Obj.GetPos().fX, Obj.GetPos().fY, Obj.GetPos().fZ, Obj.GetSize(),
-		Obj.GetColor().fR, Obj.GetColor().fG, Obj.GetColor().fB, Obj.GetColor().fA);
-
-	Obj.Update();
+	for (int i = 0; i < 50; ++i)
+	{
+		// x, y, z, size, r, g, b, a (왼쪽 위는 (-250, 250) 이다.)
+		g_Renderer->DrawSolidRect(g_SceneMgr.GetObjects(i)->GetPos().fX, g_SceneMgr.GetObjects(i)->GetPos().fY, g_SceneMgr.GetObjects(i)->GetPos().fZ, g_SceneMgr.GetObjects(i)->GetSize(),
+								  g_SceneMgr.GetObjects(i)->GetColor().fR, g_SceneMgr.GetObjects(i)->GetColor().fG, g_SceneMgr.GetObjects(i)->GetColor().fB, g_SceneMgr.GetObjects(i)->GetColor().fA);
+	}
+	g_SceneMgr.Update();
 
 	glutSwapBuffers();
 }
@@ -46,19 +49,19 @@ void Idle(void)
 //GLUT_UP, GLUT_DOWN
 void MouseInput(int button, int state, int x, int y)
 {
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-	{
-		Obj.SetLeftButtonDown(true);
-	}
+	//if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	//{
+	//	Obj.SetLeftButtonDown(true);
+	//}
 
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
-	{
-		if (Obj.GetLeftButtonDown())
-		{
-			Obj.SetTargetPos(x - WINDOWX / 2, -y + WINDOWY / 2);
-			Obj.SetLeftButtonDown(false);
-		}
-	}
+	//if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+	//{
+	//	if (Obj.GetLeftButtonDown())
+	//	{
+	//		Obj.SetTargetPos(x - WINDOWX / 2, -y + WINDOWY / 2);
+	//		Obj.SetLeftButtonDown(false);
+	//	}
+	//}
 
 	RenderScene();
 }
@@ -99,12 +102,8 @@ int main(int argc, char **argv)
 		std::cout << "Renderer could not be initialized.. \n";
 	}
 
-	// Set Object 
-	Obj.Init();
-	Obj.SetPos(0.f, 0.f);
-	Obj.SetSize(100.f);
-	Obj.SetColor(1.f, 1.f, 1.f, 1.f);
-	//
+	// Init SceneMgr
+	g_SceneMgr.Init();
 
 	glutDisplayFunc(RenderScene);
 	glutIdleFunc(Idle);

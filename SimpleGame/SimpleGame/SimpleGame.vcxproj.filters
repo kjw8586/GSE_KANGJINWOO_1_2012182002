@@ -19,6 +19,9 @@
     <Filter Include="소스 파일\Object">
       <UniqueIdentifier>{c84ff396-be65-4c84-8f49-f99f12a9fd88}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\SceneMgr">
+      <UniqueIdentifier>{0751d7e9-452d-4360-bc0e-40100fdca408}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -36,6 +39,9 @@
     <ClInclude Include="Object.h">
       <Filter>소스 파일\Object</Filter>
     </ClInclude>
+    <ClInclude Include="SceneMgr.h">
+      <Filter>소스 파일\SceneMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -49,6 +55,9 @@
     </ClCompile>
     <ClCompile Include="Object.cpp">
       <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMgr.cpp">
+      <Filter>소스 파일\SceneMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

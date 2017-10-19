@@ -6,8 +6,9 @@ class Renderer;
 class CObject
 {
 public:
+	CObject();
 	CObject(char* szName, int iHp, int iAtt);
-	~CObject(void);
+	~CObject();
 
 private:
 	struct VECTOR
@@ -49,6 +50,7 @@ public:
 	COLOR	GetColor() { return m_Color; }
 	float	GetSpeed() { return m_fSpeed; }
 	VECTOR	GetDir() { return m_Dir; }
+	VECTOR	GetTargetPos() { return m_TargetPos; }
 	bool	GetLeftButtonDown() { return m_bLeftButtonDown; }
 
 public:
