@@ -20,7 +20,7 @@ CObject::~CObject()
 
 void CObject::Init()
 {
-	m_fSpeed = 1.f;
+	m_fSpeed = 0.5f;
 
 	m_Dir.fX = -1.f;
 	m_Dir.fY = 1.f;
@@ -37,17 +37,17 @@ void CObject::Update()
 {
 	float fTime = 0.2f;
 
-	// 마우스 연동
-	//m_Dir.fX = m_TargetPos.fX - m_Pos.fX;
-	//m_Dir.fY = m_TargetPos.fY - m_Pos.fY;
-
-	//m_Dir.fX /= fSizeVector;
-	//m_Dir.fY /= fSizeVector;
-
 	m_Pos.fX += m_fSpeed * m_Dir.fX * fTime;
 	m_Pos.fY += m_fSpeed * m_Dir.fY * fTime;
 
+	// RECT 갱신
+	float fTop = m_Pos.fY + m_fSize / 2.f;
+	float fBottom = m_Pos.fY - m_fSize / 2.f;
+	float fLeft = m_Pos.fX - m_fSize / 2.f;
+	float fRight = m_Pos.fX + m_fSize / 2.f;
 
+	SetRect(fTop, fBottom, fLeft, fRight);
+	//
 
 	if (m_Pos.fX < -250.f || m_Pos.fX > 250.f) 
 	{
@@ -102,4 +102,12 @@ void CObject::SetTargetPos(float fTargetPosX, float fTargetPosY, float fTargetPo
 void CObject::SetLeftButtonDown(bool bLeftButtonDown)
 {
 	m_bLeftButtonDown = bLeftButtonDown;
+}
+
+void CObject::SetRect(float fTop, float fBottom, float fLeft, float fRight)
+{
+	m_Rect.fTop = fTop;
+	m_Rect.fBottom = fBottom;
+	m_Rect.fLeft = fLeft;
+	m_Rect.fRight = fRight;
 }

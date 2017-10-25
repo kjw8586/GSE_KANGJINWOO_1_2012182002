@@ -21,21 +21,21 @@ but WITHOUT ANY WARRANTY.
 #define WINDOWY 500
 
 Renderer *g_Renderer = NULL;
-
-CSceneMgr g_SceneMgr;
+CSceneMgr* g_SceneMgr = NULL;
 
 void RenderScene(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
 
+	g_SceneMgr->Update();
+
 	for (int i = 0; i < 50; ++i)
 	{
 		// x, y, z, size, r, g, b, a (왼쪽 위는 (-250, 250) 이다.)
-		g_Renderer->DrawSolidRect(g_SceneMgr.GetObjects(i)->GetPos().fX, g_SceneMgr.GetObjects(i)->GetPos().fY, g_SceneMgr.GetObjects(i)->GetPos().fZ, g_SceneMgr.GetObjects(i)->GetSize(),
-								  g_SceneMgr.GetObjects(i)->GetColor().fR, g_SceneMgr.GetObjects(i)->GetColor().fG, g_SceneMgr.GetObjects(i)->GetColor().fB, g_SceneMgr.GetObjects(i)->GetColor().fA);
+		g_Renderer->DrawSolidRect(g_SceneMgr->GetObjects(i)->GetPos().fX, g_SceneMgr->GetObjects(i)->GetPos().fY, g_SceneMgr->GetObjects(i)->GetPos().fZ, g_SceneMgr->GetObjects(i)->GetSize(),
+								  g_SceneMgr->GetObjects(i)->GetColor().fR, g_SceneMgr->GetObjects(i)->GetColor().fG, g_SceneMgr->GetObjects(i)->GetColor().fB, g_SceneMgr->GetObjects(i)->GetColor().fA);
 	}
-	g_SceneMgr.Update();
 
 	glutSwapBuffers();
 }
@@ -102,8 +102,9 @@ int main(int argc, char **argv)
 		std::cout << "Renderer could not be initialized.. \n";
 	}
 
-	// Init SceneMgr
-	g_SceneMgr.Init();
+	// Initialize SceneMgr
+	g_SceneMgr = new CSceneMgr();
+	g_SceneMgr->Init();
 
 	glutDisplayFunc(RenderScene);
 	glutIdleFunc(Idle);
@@ -114,6 +115,7 @@ int main(int argc, char **argv)
 	glutMainLoop();
 
 	delete g_Renderer;
+	delete g_SceneMgr;
 
 	return 0;
 }

@@ -10,16 +10,19 @@ public:
 	CSceneMgr();
 	~CSceneMgr();
 
-public:
-	void Init();
-	void Update();
-	void CheckCollision();
-
-public:
-	CObject* GetObjects(int iObjectNum) { return m_Objects[iObjectNum]; }
+private:
+	int m_ObjectsCount;
 
 private:
 	CObject* m_Objects[MAX_OBJECTS_COUNT];
+
+public:
+	void Init();
+	void Update();
+	bool CheckCollision(CObject* objA, CObject* objB);
+
+public:
+	CObject* GetObjects(int iObjectNum) { return m_Objects[iObjectNum]; }
 };
 
 #endif // SceneMgr_h__
