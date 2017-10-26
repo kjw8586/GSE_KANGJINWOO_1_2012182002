@@ -13,14 +13,11 @@ but WITHOUT ANY WARRANTY.
 #include "Dependencies\glew.h"
 #include "Dependencies\freeglut.h"
 
-#include "Renderer.h"
-#include "Object.h"
 #include "SceneMgr.h"
 
 #define WINDOWX 500
 #define WINDOWY 500
 
-Renderer *g_Renderer = NULL;
 CSceneMgr* g_SceneMgr = NULL;
 
 void RenderScene(void)
@@ -29,13 +26,6 @@ void RenderScene(void)
 	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
 
 	g_SceneMgr->Update();
-
-	for (int i = 0; i < 50; ++i)
-	{
-		// x, y, z, size, r, g, b, a (왼쪽 위는 (-250, 250) 이다.)
-		g_Renderer->DrawSolidRect(g_SceneMgr->GetObjects(i)->GetPos().fX, g_SceneMgr->GetObjects(i)->GetPos().fY, g_SceneMgr->GetObjects(i)->GetPos().fZ, g_SceneMgr->GetObjects(i)->GetSize(),
-								  g_SceneMgr->GetObjects(i)->GetColor().fR, g_SceneMgr->GetObjects(i)->GetColor().fG, g_SceneMgr->GetObjects(i)->GetColor().fB, g_SceneMgr->GetObjects(i)->GetColor().fA);
-	}
 
 	glutSwapBuffers();
 }
@@ -95,13 +85,6 @@ int main(int argc, char **argv)
 		std::cout << "GLEW 3.0 not supported\n ";
 	}
 
-	// Initialize Renderer
-	g_Renderer = new Renderer(WINDOWX, WINDOWY);
-	if (!g_Renderer->IsInitialized())
-	{
-		std::cout << "Renderer could not be initialized.. \n";
-	}
-
 	// Initialize SceneMgr
 	g_SceneMgr = new CSceneMgr();
 	g_SceneMgr->Init();
@@ -114,7 +97,6 @@ int main(int argc, char **argv)
 
 	glutMainLoop();
 
-	delete g_Renderer;
 	delete g_SceneMgr;
 
 	return 0;

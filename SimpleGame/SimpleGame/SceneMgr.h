@@ -3,6 +3,7 @@
 
 #define MAX_OBJECTS_COUNT 100
 class CObject;
+class Renderer;
 
 class CSceneMgr
 {
@@ -15,6 +16,7 @@ private:
 
 private:
 	CObject* m_Objects[MAX_OBJECTS_COUNT];
+	Renderer* m_Renderer;
 
 public:
 	void Init();
