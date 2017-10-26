@@ -41,7 +41,7 @@ CSceneMgr::~CSceneMgr()
 void CSceneMgr::Init()
 {
 	// Objects
-	m_ObjectsCount = 50;
+	m_ObjectsCount = 0;
 
 	for (int i = 0; i < m_ObjectsCount; ++i)
 	{
@@ -49,7 +49,7 @@ void CSceneMgr::Init()
 		m_Objects[i]->Init();
 		m_Objects[i]->SetPos(float(rand() % 500 - 250.f), float(rand() % 500 - 250.f), 0.f);
 		m_Objects[i]->SetColor(1.f, 1.f, 1.f, 1.f);
-		m_Objects[i]->SetSize(20.f);
+		m_Objects[i]->SetSize(10.f);
 	}
 
 	// Renderer
@@ -61,7 +61,7 @@ void CSceneMgr::Init()
 	}
 }
 
-void CSceneMgr::Update()
+void CSceneMgr::Update(float fElapsedTime)
 {
 	// Objects
 	bool bCollision[MAX_OBJECTS_COUNT];
@@ -69,10 +69,16 @@ void CSceneMgr::Update()
 	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
 		bCollision[i] = false;
 
-	for (int i = 0; i < m_ObjectsCount; ++i)
+	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
 	{
-		for (int j = 0; j < m_ObjectsCount; ++j)
+		if (m_Objects[i] == NULL)
+			continue;
+
+		for (int j = 0; j < MAX_OBJECTS_COUNT; ++j)
 		{
+			if (m_Objects[j] == NULL)
+				continue;
+
 			if (i == j)
 				continue;
 
@@ -89,14 +95,25 @@ void CSceneMgr::Update()
 			m_Objects[i]->SetColor(1.f, 1.f, 1.f, 1.f);
 	}
 
-	for (int i = 0; i < m_ObjectsCount; ++i)
-	{
-		m_Objects[i]->Update();
-	}
+	CheckObjectsLife();
 
-	// Renderer
-	for (int i = 0; i < 50; ++i)
+	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
 	{
+		if (m_Objects[i] == NULL)
+			continue;
+
+		m_Objects[i]->Update(fElapsedTime);
+	}
+}
+
+void CSceneMgr::Render()
+{
+	// Renderer
+	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
+	{
+		if (m_Objects[i] == NULL)
+			continue;
+
 		// x, y, z, size, r, g, b, a (왼쪽 위는 (-250, 250) 이다.)
 		m_Renderer->DrawSolidRect(m_Objects[i]->GetPos().fX, m_Objects[i]->GetPos().fY, m_Objects[i]->GetPos().fZ, m_Objects[i]->GetSize(),
 			m_Objects[i]->GetColor().fR, m_Objects[i]->GetColor().fG, m_Objects[i]->GetColor().fB, m_Objects[i]->GetColor().fA);
@@ -114,4 +131,39 @@ bool CSceneMgr::CheckCollision(CObject* objA, CObject* objB)
 	}
 	else
 		return false;
+}
+
+int g_Temp = 0;
+
+void CSceneMgr::CreateObjects(float fX, float fY)
+{
+	m_Objects[g_Temp] = new CObject();
+	m_Objects[g_Temp]->Init();
+	m_Objects[g_Temp]->SetPos(fX, fY);
+	m_Objects[g_Temp]->SetColor(1.f, 1.f, 1.f, 1.f);
+	m_Objects[g_Temp]->SetSize(10.f);
+
+	++g_Temp;
+}
+
+void CSceneMgr::IncreaseObjectsCount()
+{
+	++m_ObjectsCount;
+}
+
+void CSceneMgr::CheckObjectsLife()
+{
+	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
+	{
+		if (m_Objects[i] == NULL)
+			continue;
+
+		if (m_Objects[i]->GetLife() <= 0.f)
+		{
+			delete m_Objects[i];
+			m_Objects[i] = NULL;
+
+			--m_ObjectsCount;
+		}
+	}
 }

@@ -9,23 +9,30 @@ but WITHOUT ANY WARRANTY.
 */
 
 #include "stdafx.h"
-#include <iostream>
 #include "Dependencies\glew.h"
 #include "Dependencies\freeglut.h"
 
 #include "SceneMgr.h"
 
-#define WINDOWX 500
-#define WINDOWY 500
+#define WINCX 500
+#define WINCY 500
 
 CSceneMgr* g_SceneMgr = NULL;
+
+DWORD g_prevTime = 0;
+bool g_LButtonDown = false;
 
 void RenderScene(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
 
-	g_SceneMgr->Update();
+	DWORD currTime = timeGetTime();
+	DWORD elapsedTime = currTime - g_prevTime;
+	g_prevTime = currTime;
+
+	g_SceneMgr->Update(float(elapsedTime));
+	g_SceneMgr->Render();
 
 	glutSwapBuffers();
 }
@@ -39,19 +46,24 @@ void Idle(void)
 //GLUT_UP, GLUT_DOWN
 void MouseInput(int button, int state, int x, int y)
 {
-	//if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-	//{
-	//	Obj.SetLeftButtonDown(true);
-	//}
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	{
+		g_LButtonDown = true;
+	}
 
-	//if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
-	//{
-	//	if (Obj.GetLeftButtonDown())
-	//	{
-	//		Obj.SetTargetPos(x - WINDOWX / 2, -y + WINDOWY / 2);
-	//		Obj.SetLeftButtonDown(false);
-	//	}
-	//}
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+	{
+		if (g_LButtonDown)
+		{
+			if (g_SceneMgr->GetObjectsCount() < 10)
+			{
+				g_SceneMgr->CreateObjects(float(x - WINCX / 2.f), float(-y + WINCY / 2.f));
+				g_SceneMgr->IncreaseObjectsCount();
+			}
+
+			g_LButtonDown = false;
+		}
+	}
 
 	RenderScene();
 }
@@ -88,6 +100,8 @@ int main(int argc, char **argv)
 	// Initialize SceneMgr
 	g_SceneMgr = new CSceneMgr();
 	g_SceneMgr->Init();
+
+	g_prevTime = timeGetTime();
 
 	glutDisplayFunc(RenderScene);
 	glutIdleFunc(Idle);

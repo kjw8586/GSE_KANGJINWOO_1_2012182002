@@ -40,6 +40,8 @@ private:
 	int		m_iAtt;
 	float	m_fSize;
 	float	m_fSpeed;
+	float	m_fLife;
+	float	m_fLifeTime;
 	bool	m_bLeftButtonDown;
 	VECTOR	m_Pos;
 	VECTOR	m_Dir;
@@ -49,7 +51,7 @@ private:
 	
 public:
 	void	Init();
-	void	Update();
+	void	Update(float fElapsedTime);
 
 public:
 	float	GetSize() { return m_fSize; }
@@ -60,6 +62,7 @@ public:
 	VECTOR	GetTargetPos() { return m_TargetPos; }
 	bool	GetLeftButtonDown() { return m_bLeftButtonDown; }
 	RECT	GetRect() { return m_Rect; }
+	float	GetLife() { return m_fLife; }
 
 public:
 	void	SetSize(float fSize);

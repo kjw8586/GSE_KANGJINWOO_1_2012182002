@@ -20,7 +20,8 @@ CObject::~CObject()
 
 void CObject::Init()
 {
-	m_fSpeed = 0.5f;
+	m_fSpeed = 100.f;
+	m_fLife = 1000.f;
 
 	m_Dir.fX = -1.f;
 	m_Dir.fY = 1.f;
@@ -33,9 +34,11 @@ void CObject::Init()
 	m_bLeftButtonDown = false;
 }
 
-void CObject::Update()
+void CObject::Update(float fElapsedTime)
 {
-	float fTime = 0.2f;
+	float fTime = fElapsedTime / 1000.f;
+
+	m_fLife -= 100.f * fTime;
 
 	m_Pos.fX += m_fSpeed * m_Dir.fX * fTime;
 	m_Pos.fY += m_fSpeed * m_Dir.fY * fTime;
@@ -49,13 +52,27 @@ void CObject::Update()
 	SetRect(fTop, fBottom, fLeft, fRight);
 	//
 
-	if (m_Pos.fX < -250.f || m_Pos.fX > 250.f) 
+	if (m_Pos.fX < -250.f) 
 	{
+		m_Pos.fX = -250.f;
 		m_Dir.fX *= -1.f;
 	}
 
-	if (m_Pos.fY < -250.f || m_Pos.fY > 250.f)
+	if (m_Pos.fX > 250.f)
 	{
+		m_Pos.fX = 250.f;
+		m_Dir.fX *= -1.f;
+	}
+
+	if (m_Pos.fY < -250.f)
+	{
+		m_Pos.fY = -250.f;
+		m_Dir.fY *= -1.f;
+	}
+
+	if (m_Pos.fY > 250.f)
+	{
+		m_Pos.fY = 250.f;
 		m_Dir.fY *= -1.f;
 	}
 }
