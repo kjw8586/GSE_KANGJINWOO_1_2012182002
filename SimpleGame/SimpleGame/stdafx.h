@@ -6,5 +6,6 @@
 #include <tchar.h>
 #include <iostream>
 #include <windows.h>
+#include <list>
 
 using namespace std;

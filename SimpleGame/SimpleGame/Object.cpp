@@ -1,16 +1,11 @@
 #include "stdafx.h"
 #include "Object.h"
+#include "SceneMgr.h"
 
-CObject::CObject()
+CObject::CObject(OBJECTTYPE ObjectType)
+	: m_ObjectType(ObjectType)
 {
 
-}
-
-CObject::CObject(char* szName, int iHp, int iAtt)
-	: m_iHp(iHp)
-	, m_iAtt(iAtt)
-{
-	strcpy_s(m_szName, sizeof(szName), szName);
 }
 
 CObject::~CObject()
@@ -20,12 +15,15 @@ CObject::~CObject()
 
 void CObject::Init()
 {
-	m_fSpeed = 100.f;
+	m_fSpeed = 0.f;
 	m_fLife = 1000.f;
 
-	m_Dir.fX = -1.f;
-	m_Dir.fY = 1.f;
-	m_Dir.fZ = 0.f;
+	do
+	{
+		m_Dir.fX = float(rand() % 3 - 1);
+		m_Dir.fY = float(rand() % 3 - 1);
+		m_Dir.fZ = 0.f;
+	} while (m_Dir.fX == 0 && m_Dir.fY == 0);
 
 	m_TargetPos.fX = 0.f;
 	m_TargetPos.fY = 0.f;
@@ -38,21 +36,18 @@ void CObject::Update(float fElapsedTime)
 {
 	float fTime = fElapsedTime / 1000.f;
 
-	m_fLife -= 100.f * fTime;
+	// RECT 갱신
+	m_Rect.fTop = m_Pos.fY + m_fSize / 2.f;
+	m_Rect.fBottom = m_Pos.fY - m_fSize / 2.f;
+	m_Rect.fLeft = m_Pos.fX - m_fSize / 2.f;
+	m_Rect.fRight = m_Pos.fX + m_fSize / 2.f;
 
+	// Pos 갱신
 	m_Pos.fX += m_fSpeed * m_Dir.fX * fTime;
 	m_Pos.fY += m_fSpeed * m_Dir.fY * fTime;
 
-	// RECT 갱신
-	float fTop = m_Pos.fY + m_fSize / 2.f;
-	float fBottom = m_Pos.fY - m_fSize / 2.f;
-	float fLeft = m_Pos.fX - m_fSize / 2.f;
-	float fRight = m_Pos.fX + m_fSize / 2.f;
-
-	SetRect(fTop, fBottom, fLeft, fRight);
-	//
-
-	if (m_Pos.fX < -250.f) 
+	// Dir 갱신
+	if (m_Pos.fX < -250.f)
 	{
 		m_Pos.fX = -250.f;
 		m_Dir.fX *= -1.f;
@@ -75,6 +70,47 @@ void CObject::Update(float fElapsedTime)
 		m_Pos.fY = 250.f;
 		m_Dir.fY *= -1.f;
 	}
+
+	switch (m_ObjectType)
+	{
+	case OBJECT_BUILDING:
+		UpdateBuilding(fTime);
+		break;
+	case OBJECT_CHARACTER:
+		UpdateCharacter(fTime);
+		break;
+	case OBJECT_BULLET:
+		UpdateBullet(fTime);
+		break;
+	case OBJECT_ARROW:
+		UpdateArrow(fTime);
+		break;
+	}
+}
+
+void CObject::UpdateBuilding(float fTime)
+{
+
+}
+
+void CObject::UpdateCharacter(float fTime)
+{
+	
+}
+
+void CObject::UpdateBullet(float fTime)
+{
+
+}
+
+void CObject::UpdateArrow(float fTime)
+{
+
+}
+
+void CObject::DecreaseLife(float fDamage)
+{
+	m_fLife -= fDamage;
 }
 
 void CObject::SetSize(float fSize)
@@ -127,4 +163,14 @@ void CObject::SetRect(float fTop, float fBottom, float fLeft, float fRight)
 	m_Rect.fBottom = fBottom;
 	m_Rect.fLeft = fLeft;
 	m_Rect.fRight = fRight;
+}
+
+void CObject::SetLife(float fLife)
+{
+	m_fLife = fLife;
+}
+
+void CObject::SetDead()
+{
+	m_fLife = 0.f;
 }

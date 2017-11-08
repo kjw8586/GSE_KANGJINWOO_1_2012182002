@@ -55,10 +55,9 @@ void MouseInput(int button, int state, int x, int y)
 	{
 		if (g_LButtonDown)
 		{
-			if (g_SceneMgr->GetObjectsCount() < 10)
+			if (g_SceneMgr->GetCharacterCount() < 100)
 			{
-				g_SceneMgr->CreateObjects(float(x - WINCX / 2.f), float(-y + WINCY / 2.f));
-				g_SceneMgr->IncreaseObjectsCount();
+				g_SceneMgr->CreateObjects(float(x - WINCX / 2.f), float(-y + WINCY / 2.f), OBJECT_CHARACTER);
 			}
 
 			g_LButtonDown = false;
