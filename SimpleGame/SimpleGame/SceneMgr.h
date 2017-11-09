@@ -25,6 +25,10 @@ private:
 	int			m_CharacterCount;
 	int			m_BulletCount;
 	int			m_ArrowCount;
+	int			m_texBuilding;
+	int			m_texCharacter;
+	int			m_texBullet;
+	int			m_texArrow;
 
 private:
 	CObject*	m_Building[MAX_OBJECTS_COUNT];
@@ -40,6 +44,8 @@ public:
 	bool		CheckCollision(CObject* objA, CObject* objB);
 	void		CollisionBuildingAndCharacter();
 	void		CollisionCharacterAndBullet();
+	void		CollisionBuildingAndArrow();
+	void		CollisionCharacterAndArrow();
 
 public:
 	int			GetBuildingCount() { return m_BuildingCount; }
@@ -48,7 +54,7 @@ public:
 	int			GetArrowCount() { return m_ArrowCount; }
 
 public:
-	void		CreateObjects(float fX, float fY, OBJECTTYPE ObjType);
+	void		CreateObjects(float fX, float fY, OBJECTTYPE ObjType, int iParentNum = -1);
 	void		CheckObjectsLife();
 };
 

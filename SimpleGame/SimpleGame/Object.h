@@ -39,6 +39,7 @@ private:
 	char		m_szName[100];
 	int			m_iHp;
 	int			m_iAtt;
+	int			m_iParentNum;
 	float		m_fSize;
 	float		m_fSpeed;
 	float		m_fLife;
@@ -52,15 +53,15 @@ private:
 	OBJECTTYPE	m_ObjectType;
 	
 public:
-	void	Init();
-	void	Update(float fElapsedTime);
-	void	UpdateBuilding(float fTime);
-	void	UpdateCharacter(float fTime);
-	void	UpdateBullet(float fTime);
-	void	UpdateArrow(float fTime);
+	void		Init();
+	void		Update(float fElapsedTime);
+	void		UpdateBuilding(float fTime);
+	void		UpdateCharacter(float fTime);
+	void		UpdateBullet(float fTime);
+	void		UpdateArrow(float fTime);
 
 public:
-	void	DecreaseLife(float fDamage);
+	void		DecreaseLife(float fDamage);
 
 public:
 	float		GetSize() { return m_fSize; }
@@ -73,18 +74,20 @@ public:
 	RECT		GetRect() { return m_Rect; }
 	float		GetLife() { return m_fLife; }
 	OBJECTTYPE	GetObjectType() { return m_ObjectType; }
+	int			GetParentNum() { return m_iParentNum; }
 
 public:
-	void	SetSize(float fSize);
-	void	SetPos(float fX, float fY, float fZ = 0.f);
-	void	SetColor(float fR, float fG, float fB, float fA);
-	void	SetSpeed(float fSpeed);
-	void	SetDir(float fDirX, float fDirY, float fDirZ);
-	void	SetTargetPos(float fTargetPosX, float fTargetPosY, float fTargetPosZ = 0.f);
-	void	SetLeftButtonDown(bool bLeftButtonDown);
-	void	SetRect(float fTop, float fBottom, float fLeft, float fRight);
-	void	SetLife(float fLife);
-	void	SetDead();
+	void		SetSize(float fSize);
+	void		SetPos(float fX, float fY, float fZ = 0.f);
+	void		SetColor(float fR, float fG, float fB, float fA);
+	void		SetSpeed(float fSpeed);
+	void		SetDir(float fDirX, float fDirY, float fDirZ);
+	void		SetTargetPos(float fTargetPosX, float fTargetPosY, float fTargetPosZ = 0.f);
+	void		SetLeftButtonDown(bool bLeftButtonDown);
+	void		SetRect(float fTop, float fBottom, float fLeft, float fRight);
+	void		SetLife(float fLife);
+	void		SetDead();
+	void		SetParentNum(int iParentNum);
 };
 
 #endif // Object_h__

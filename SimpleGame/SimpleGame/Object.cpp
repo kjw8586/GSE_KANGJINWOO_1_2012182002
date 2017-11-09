@@ -174,3 +174,8 @@ void CObject::SetDead()
 {
 	m_fLife = 0.f;
 }
+
+void CObject::SetParentNum(int iParentNum)
+{
+	m_iParentNum = iParentNum;
+}

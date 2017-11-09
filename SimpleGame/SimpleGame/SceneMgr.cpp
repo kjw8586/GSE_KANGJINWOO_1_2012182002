@@ -76,18 +76,25 @@ void CSceneMgr::Init()
 	{
 		std::cout << "Renderer could not be initialized.. \n";
 	}
+
+	m_texBuilding = m_Renderer->CreatePngTexture("./Resources/Building.png");
 }
 
 void CSceneMgr::Update(float fElapsedTime)
 {
 	float fTime = fElapsedTime / 1000.f;
 
-	static float fTimeTerm = 0.f;
-	fTimeTerm += fTime;
+	static float fTimeTerm_Bullet = 0.f;
+	fTimeTerm_Bullet += fTime;
+
+	static float fTimeTerm_Arrow = 0.f;
+	fTimeTerm_Arrow += fTime;
 
 	// Objects
 	CollisionBuildingAndCharacter();
 	CollisionCharacterAndBullet();
+	CollisionBuildingAndArrow();
+	CollisionCharacterAndArrow();
 
 	CheckObjectsLife();
 
@@ -97,19 +104,31 @@ void CSceneMgr::Update(float fElapsedTime)
 		{
 			m_Building[i]->Update(fElapsedTime);
 
-			if (fTimeTerm > 1.f)
+			if (fTimeTerm_Bullet > 1.f)
 			{
 				float fX = m_Building[i]->GetPos().fX;
 				float fY = m_Building[i]->GetPos().fY;
 
 				CreateObjects(fX, fY, OBJECT_BULLET);
 
-				fTimeTerm = 0.f;
+				fTimeTerm_Bullet = 0.f;
 			}
 		}
 
 		if (m_Character[i] != NULL)
+		{
 			m_Character[i]->Update(fElapsedTime);
+
+			if (fTimeTerm_Arrow > 0.5f)
+			{
+				float fX = m_Character[i]->GetPos().fX;
+				float fY = m_Character[i]->GetPos().fY;
+
+				CreateObjects(fX, fY, OBJECT_ARROW, i);
+
+				fTimeTerm_Arrow = 0.f;
+			}
+		}
 
 		if (m_Bullet[i] != NULL)
 			m_Bullet[i]->Update(fElapsedTime);
@@ -126,8 +145,8 @@ void CSceneMgr::Render()
 	{
 		if (m_Building[i] != NULL)
 		{
-			m_Renderer->DrawSolidRect(m_Building[i]->GetPos().fX, m_Building[i]->GetPos().fY, m_Building[i]->GetPos().fZ, m_Building[i]->GetSize(),
-				m_Building[i]->GetColor().fR, m_Building[i]->GetColor().fG, m_Building[i]->GetColor().fB, m_Building[i]->GetColor().fA);
+			m_Renderer->DrawTexturedRect(m_Building[i]->GetPos().fX, m_Building[i]->GetPos().fY, m_Building[i]->GetPos().fZ, m_Building[i]->GetSize(),
+				m_Building[i]->GetColor().fR, m_Building[i]->GetColor().fG, m_Building[i]->GetColor().fB, m_Building[i]->GetColor().fA, m_texBuilding);
 		}
 
 		if (m_Character[i] != NULL)
@@ -221,7 +240,68 @@ void CSceneMgr::CollisionCharacterAndBullet()
 	}
 }
 
-void CSceneMgr::CreateObjects(float fX, float fY, OBJECTTYPE ObjType)
+void CSceneMgr::CollisionBuildingAndArrow()
+{
+	bool bCollision[MAX_OBJECTS_COUNT];
+
+	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
+		bCollision[i] = false;
+
+	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
+	{
+		if (m_Building[i] == NULL)
+			continue;
+
+		for (int j = 0; j < MAX_OBJECTS_COUNT; ++j)
+		{
+			if (m_Arrow[j] == NULL)
+				continue;
+
+			if (CheckCollision(m_Building[i], m_Arrow[j]))
+			{
+				float fDamage = m_Arrow[j]->GetLife();
+
+				m_Building[i]->DecreaseLife(fDamage);
+				m_Arrow[j]->SetDead();
+				break;
+			}
+		}
+	}
+}
+
+void CSceneMgr::CollisionCharacterAndArrow()
+{
+	bool bCollision[MAX_OBJECTS_COUNT];
+
+	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
+		bCollision[i] = false;
+
+	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
+	{
+		if (m_Character[i] == NULL)
+			continue;
+
+		for (int j = 0; j < MAX_OBJECTS_COUNT; ++j)
+		{
+			if (m_Arrow[j] == NULL)
+				continue;
+
+			if (m_Arrow[j]->GetParentNum() == i)			// 자신을 생성한 부모일 경우 충돌 처리 안함
+				continue;
+
+			if (CheckCollision(m_Character[i], m_Arrow[j]))
+			{
+				float fDamage = m_Arrow[j]->GetLife();
+
+				m_Character[i]->DecreaseLife(fDamage);
+				m_Arrow[j]->SetDead();
+				break;
+			}
+		}
+	}
+}
+
+void CSceneMgr::CreateObjects(float fX, float fY, OBJECTTYPE ObjType, int iParentNum /* = -1 */)
 {
 	switch (ObjType)
 	{
@@ -278,6 +358,7 @@ void CSceneMgr::CreateObjects(float fX, float fY, OBJECTTYPE ObjType)
 		m_Arrow[m_ArrowCount]->SetSize(2.f);
 		m_Arrow[m_ArrowCount]->SetSpeed(100.f);
 		m_Arrow[m_ArrowCount]->SetLife(10.f);
+		m_Arrow[m_ArrowCount]->SetParentNum(iParentNum);
 
 		++m_ArrowCount;
 		break;
