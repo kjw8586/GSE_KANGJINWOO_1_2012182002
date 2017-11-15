@@ -16,7 +16,8 @@ CObject::~CObject()
 void CObject::Init()
 {
 	m_fSpeed = 0.f;
-	m_fLife = 1000.f;
+	m_fTimeTerm_Bullet = 0.f;
+	m_fTimeTerm_Arrow = 0.f;
 
 	do
 	{
@@ -28,13 +29,14 @@ void CObject::Init()
 	m_TargetPos.fX = 0.f;
 	m_TargetPos.fY = 0.f;
 	m_TargetPos.fZ = 0.f;
-
-	m_bLeftButtonDown = false;
 }
 
 void CObject::Update(float fElapsedTime)
 {
 	float fTime = fElapsedTime / 1000.f;
+
+	m_fTimeTerm_Bullet += fTime;
+	m_fTimeTerm_Arrow += fTime;
 
 	// RECT 갱신
 	m_Rect.fTop = m_Pos.fY + m_fSize / 2.f;
@@ -45,31 +47,6 @@ void CObject::Update(float fElapsedTime)
 	// Pos 갱신
 	m_Pos.fX += m_fSpeed * m_Dir.fX * fTime;
 	m_Pos.fY += m_fSpeed * m_Dir.fY * fTime;
-
-	// Dir 갱신
-	if (m_Pos.fX < -250.f)
-	{
-		m_Pos.fX = -250.f;
-		m_Dir.fX *= -1.f;
-	}
-
-	if (m_Pos.fX > 250.f)
-	{
-		m_Pos.fX = 250.f;
-		m_Dir.fX *= -1.f;
-	}
-
-	if (m_Pos.fY < -250.f)
-	{
-		m_Pos.fY = -250.f;
-		m_Dir.fY *= -1.f;
-	}
-
-	if (m_Pos.fY > 250.f)
-	{
-		m_Pos.fY = 250.f;
-		m_Dir.fY *= -1.f;
-	}
 
 	switch (m_ObjectType)
 	{
@@ -95,17 +72,54 @@ void CObject::UpdateBuilding(float fTime)
 
 void CObject::UpdateCharacter(float fTime)
 {
-	
+	// Dir 갱신
+	if (m_Pos.fX < -250.f)
+	{
+		m_Pos.fX = -250.f;
+		m_Dir.fX *= -1.f;
+	}
+
+	if (m_Pos.fX > 250.f)
+	{
+		m_Pos.fX = 250.f;
+		m_Dir.fX *= -1.f;
+	}
+
+	if (m_Pos.fY < -250.f)
+	{
+		m_Pos.fY = -250.f;
+		m_Dir.fY *= -1.f;
+	}
+
+	if (m_Pos.fY > 250.f)
+	{
+		m_Pos.fY = 250.f;
+		m_Dir.fY *= -1.f;
+	}
 }
 
 void CObject::UpdateBullet(float fTime)
 {
-
+	// 화면 밖으로 나가면 삭제
+	if ((m_Pos.fX < -250.f - m_fSize / 2.f) ||
+		(m_Pos.fX > 250.f + m_fSize / 2.f) ||
+		(m_Pos.fY < -250.f - m_fSize / 2.f) ||
+		(m_Pos.fY > 250.f + m_fSize / 2.f))
+	{
+		m_fLife = 0.f;
+	}
 }
 
 void CObject::UpdateArrow(float fTime)
 {
-
+	// 화면 밖으로 나가면 삭제
+	if ((m_Pos.fX < -250.f - m_fSize / 2.f) || 
+		(m_Pos.fX > 250.f + m_fSize / 2.f) ||
+		(m_Pos.fY < -250.f - m_fSize / 2.f) || 
+		(m_Pos.fY > 250.f + m_fSize / 2.f))
+	{
+		m_fLife = 0.f;
+	}
 }
 
 void CObject::DecreaseLife(float fDamage)
@@ -152,11 +166,6 @@ void CObject::SetTargetPos(float fTargetPosX, float fTargetPosY, float fTargetPo
 	m_TargetPos.fZ = fTargetPosZ;
 }
 
-void CObject::SetLeftButtonDown(bool bLeftButtonDown)
-{
-	m_bLeftButtonDown = bLeftButtonDown;
-}
-
 void CObject::SetRect(float fTop, float fBottom, float fLeft, float fRight)
 {
 	m_Rect.fTop = fTop;
@@ -178,4 +187,14 @@ void CObject::SetDead()
 void CObject::SetParentNum(int iParentNum)
 {
 	m_iParentNum = iParentNum;
+}
+
+void CObject::SetTimeTerm_Bullet(float fTime)
+{
+	m_fTimeTerm_Bullet = fTime;
+}
+
+void CObject::SetTimeTerm_Arrow(float fTime)
+{
+	m_fTimeTerm_Arrow = fTime;
 }

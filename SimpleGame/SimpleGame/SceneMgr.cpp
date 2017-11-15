@@ -84,12 +84,6 @@ void CSceneMgr::Update(float fElapsedTime)
 {
 	float fTime = fElapsedTime / 1000.f;
 
-	static float fTimeTerm_Bullet = 0.f;
-	fTimeTerm_Bullet += fTime;
-
-	static float fTimeTerm_Arrow = 0.f;
-	fTimeTerm_Arrow += fTime;
-
 	// Objects
 	CollisionBuildingAndCharacter();
 	CollisionCharacterAndBullet();
@@ -104,14 +98,14 @@ void CSceneMgr::Update(float fElapsedTime)
 		{
 			m_Building[i]->Update(fElapsedTime);
 
-			if (fTimeTerm_Bullet > 1.f)
+			if (m_Building[i]->GetTimeTerm_Bullet() > 1.f)
 			{
 				float fX = m_Building[i]->GetPos().fX;
 				float fY = m_Building[i]->GetPos().fY;
 
 				CreateObjects(fX, fY, OBJECT_BULLET);
 
-				fTimeTerm_Bullet = 0.f;
+				m_Building[i]->SetTimeTerm_Bullet(0.f);
 			}
 		}
 
@@ -119,14 +113,14 @@ void CSceneMgr::Update(float fElapsedTime)
 		{
 			m_Character[i]->Update(fElapsedTime);
 
-			if (fTimeTerm_Arrow > 0.5f)
+			if (m_Character[i]->GetTimeTerm_Arrow() > 0.5f)
 			{
 				float fX = m_Character[i]->GetPos().fX;
 				float fY = m_Character[i]->GetPos().fY;
 
 				CreateObjects(fX, fY, OBJECT_ARROW, i);
 
-				fTimeTerm_Arrow = 0.f;
+				m_Character[i]->SetTimeTerm_Arrow(0.f);
 			}
 		}
 
@@ -184,11 +178,6 @@ bool CSceneMgr::CheckCollision(CObject* objA, CObject* objB)
 
 void CSceneMgr::CollisionBuildingAndCharacter()
 {
-	bool bCollision[MAX_OBJECTS_COUNT];
-
-	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
-		bCollision[i] = false;
-
 	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
 	{
 		if (m_Building[i] == NULL)
@@ -205,7 +194,9 @@ void CSceneMgr::CollisionBuildingAndCharacter()
 
 				m_Building[i]->DecreaseLife(fDamage);
 				m_Character[j]->SetDead();
-				break;
+				
+				if (m_Building[i]->GetLife() <= 0.f)
+					break;
 			}
 		}
 	}
@@ -213,11 +204,6 @@ void CSceneMgr::CollisionBuildingAndCharacter()
 
 void CSceneMgr::CollisionCharacterAndBullet()
 {
-	bool bCollision[MAX_OBJECTS_COUNT];
-
-	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
-		bCollision[i] = false;
-
 	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
 	{
 		if (m_Character[i] == NULL)
@@ -234,7 +220,9 @@ void CSceneMgr::CollisionCharacterAndBullet()
 
 				m_Character[i]->DecreaseLife(fDamage);
 				m_Bullet[j]->SetDead();
-				break;
+
+				if (m_Character[i]->GetLife() <= 0.f)
+					break;
 			}
 		}
 	}
@@ -242,11 +230,6 @@ void CSceneMgr::CollisionCharacterAndBullet()
 
 void CSceneMgr::CollisionBuildingAndArrow()
 {
-	bool bCollision[MAX_OBJECTS_COUNT];
-
-	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
-		bCollision[i] = false;
-
 	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
 	{
 		if (m_Building[i] == NULL)
@@ -263,7 +246,9 @@ void CSceneMgr::CollisionBuildingAndArrow()
 
 				m_Building[i]->DecreaseLife(fDamage);
 				m_Arrow[j]->SetDead();
-				break;
+
+				if (m_Building[i]->GetLife() <= 0.f)
+					break;
 			}
 		}
 	}
@@ -271,11 +256,6 @@ void CSceneMgr::CollisionBuildingAndArrow()
 
 void CSceneMgr::CollisionCharacterAndArrow()
 {
-	bool bCollision[MAX_OBJECTS_COUNT];
-
-	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
-		bCollision[i] = false;
-
 	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
 	{
 		if (m_Character[i] == NULL)
@@ -295,7 +275,9 @@ void CSceneMgr::CollisionCharacterAndArrow()
 
 				m_Character[i]->DecreaseLife(fDamage);
 				m_Arrow[j]->SetDead();
-				break;
+
+				if (m_Character[i]->GetLife() <= 0.f)
+					break;
 			}
 		}
 	}
@@ -303,19 +285,30 @@ void CSceneMgr::CollisionCharacterAndArrow()
 
 void CSceneMgr::CreateObjects(float fX, float fY, OBJECTTYPE ObjType, int iParentNum /* = -1 */)
 {
+	int iNum = 0;
+
 	switch (ObjType)
 	{
 	case OBJECT_BUILDING:
 		if (m_BuildingCount >= MAX_OBJECTS_COUNT)
 			return;
 
-		m_Building[m_BuildingCount] = new CObject(OBJECT_BUILDING);
-		m_Building[m_BuildingCount]->Init();
-		m_Building[m_BuildingCount]->SetPos(fX, fY);
-		m_Building[m_BuildingCount]->SetColor(1.f, 1.f, 0.f, 1.f);
-		m_Building[m_BuildingCount]->SetSize(50.f);
-		m_Building[m_BuildingCount]->SetSpeed(0.f);
-		m_Building[m_BuildingCount]->SetLife(500.f);
+		for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
+		{
+			if (m_Building[i] == NULL)
+			{
+				iNum = i;
+				break;
+			}
+		}
+
+		m_Building[iNum] = new CObject(OBJECT_BUILDING);
+		m_Building[iNum]->Init();
+		m_Building[iNum]->SetPos(fX, fY);
+		m_Building[iNum]->SetColor(1.f, 1.f, 0.f, 1.f);
+		m_Building[iNum]->SetSize(50.f);
+		m_Building[iNum]->SetSpeed(0.f);
+		m_Building[iNum]->SetLife(500.f);
 
 		++m_BuildingCount;
 		break;
@@ -323,13 +316,22 @@ void CSceneMgr::CreateObjects(float fX, float fY, OBJECTTYPE ObjType, int iParen
 		if (m_CharacterCount >= MAX_OBJECTS_COUNT)
 			return;
 
-		m_Character[m_CharacterCount] = new CObject(OBJECT_CHARACTER);
-		m_Character[m_CharacterCount]->Init();
-		m_Character[m_CharacterCount]->SetPos(fX, fY);
-		m_Character[m_CharacterCount]->SetColor(1.f, 1.f, 1.f, 1.f);
-		m_Character[m_CharacterCount]->SetSize(10.f);
-		m_Character[m_CharacterCount]->SetSpeed(300.f);
-		m_Character[m_CharacterCount]->SetLife(10.f);
+		for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
+		{
+			if (m_Character[i] == NULL)
+			{
+				iNum = i;
+				break;
+			}
+		}
+
+		m_Character[iNum] = new CObject(OBJECT_CHARACTER);
+		m_Character[iNum]->Init();
+		m_Character[iNum]->SetPos(fX, fY);
+		m_Character[iNum]->SetColor(1.f, 1.f, 1.f, 1.f);
+		m_Character[iNum]->SetSize(10.f);
+		m_Character[iNum]->SetSpeed(300.f);
+		m_Character[iNum]->SetLife(10.f);
 
 		++m_CharacterCount;
 		break;
@@ -337,13 +339,22 @@ void CSceneMgr::CreateObjects(float fX, float fY, OBJECTTYPE ObjType, int iParen
 		if (m_BulletCount >= MAX_OBJECTS_COUNT)
 			return;
 
-		m_Bullet[m_BulletCount] = new CObject(OBJECT_BULLET);
-		m_Bullet[m_BulletCount]->Init();
-		m_Bullet[m_BulletCount]->SetPos(fX, fY);
-		m_Bullet[m_BulletCount]->SetColor(1.f, 0.f, 0.f, 1.f);
-		m_Bullet[m_BulletCount]->SetSize(5.f);
-		m_Bullet[m_BulletCount]->SetSpeed(400.f);
-		m_Bullet[m_BulletCount]->SetLife(20.f);
+		for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
+		{
+			if (m_Bullet[i] == NULL)
+			{
+				iNum = i;
+				break;
+			}
+		}
+
+		m_Bullet[iNum] = new CObject(OBJECT_BULLET);
+		m_Bullet[iNum]->Init();
+		m_Bullet[iNum]->SetPos(fX, fY);
+		m_Bullet[iNum]->SetColor(1.f, 0.f, 0.f, 1.f);
+		m_Bullet[iNum]->SetSize(5.f);
+		m_Bullet[iNum]->SetSpeed(400.f);
+		m_Bullet[iNum]->SetLife(20.f);
 
 		++m_BulletCount;
 		break;
@@ -351,14 +362,23 @@ void CSceneMgr::CreateObjects(float fX, float fY, OBJECTTYPE ObjType, int iParen
 		if (m_ArrowCount >= MAX_OBJECTS_COUNT)
 			return;
 
-		m_Arrow[m_ArrowCount] = new CObject(OBJECT_ARROW);
-		m_Arrow[m_ArrowCount]->Init();
-		m_Arrow[m_ArrowCount]->SetPos(fX, fY);
-		m_Arrow[m_ArrowCount]->SetColor(0.f, 1.f, 0.f, 1.f);
-		m_Arrow[m_ArrowCount]->SetSize(2.f);
-		m_Arrow[m_ArrowCount]->SetSpeed(100.f);
-		m_Arrow[m_ArrowCount]->SetLife(10.f);
-		m_Arrow[m_ArrowCount]->SetParentNum(iParentNum);
+		for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
+		{
+			if (m_Arrow[i] == NULL)
+			{
+				iNum = i;
+				break;
+			}
+		}
+
+		m_Arrow[iNum] = new CObject(OBJECT_ARROW);
+		m_Arrow[iNum]->Init();
+		m_Arrow[iNum]->SetPos(fX, fY);
+		m_Arrow[iNum]->SetColor(0.f, 1.f, 0.f, 1.f);
+		m_Arrow[iNum]->SetSize(2.f);
+		m_Arrow[iNum]->SetSpeed(100.f);
+		m_Arrow[iNum]->SetLife(10.f);
+		m_Arrow[iNum]->SetParentNum(iParentNum);
 
 		++m_ArrowCount;
 		break;

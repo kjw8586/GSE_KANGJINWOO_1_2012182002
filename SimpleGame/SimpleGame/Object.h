@@ -36,15 +36,13 @@ private:
 	};
 
 private:
-	char		m_szName[100];
-	int			m_iHp;
-	int			m_iAtt;
 	int			m_iParentNum;
 	float		m_fSize;
 	float		m_fSpeed;
 	float		m_fLife;
 	float		m_fLifeTime;
-	bool		m_bLeftButtonDown;
+	float		m_fTimeTerm_Bullet;
+	float		m_fTimeTerm_Arrow;
 	VECTOR		m_Pos;
 	VECTOR		m_Dir;
 	VECTOR		m_TargetPos;
@@ -70,11 +68,12 @@ public:
 	float		GetSpeed() { return m_fSpeed; }
 	VECTOR		GetDir() { return m_Dir; }
 	VECTOR		GetTargetPos() { return m_TargetPos; }
-	bool		GetLeftButtonDown() { return m_bLeftButtonDown; }
 	RECT		GetRect() { return m_Rect; }
 	float		GetLife() { return m_fLife; }
 	OBJECTTYPE	GetObjectType() { return m_ObjectType; }
 	int			GetParentNum() { return m_iParentNum; }
+	float		GetTimeTerm_Bullet() { return m_fTimeTerm_Bullet; }
+	float		GetTimeTerm_Arrow() { return m_fTimeTerm_Arrow; }
 
 public:
 	void		SetSize(float fSize);
@@ -83,11 +82,12 @@ public:
 	void		SetSpeed(float fSpeed);
 	void		SetDir(float fDirX, float fDirY, float fDirZ);
 	void		SetTargetPos(float fTargetPosX, float fTargetPosY, float fTargetPosZ = 0.f);
-	void		SetLeftButtonDown(bool bLeftButtonDown);
 	void		SetRect(float fTop, float fBottom, float fLeft, float fRight);
 	void		SetLife(float fLife);
 	void		SetDead();
 	void		SetParentNum(int iParentNum);
+	void		SetTimeTerm_Bullet(float fTime);
+	void		SetTimeTerm_Arrow(float fTime);
 };
 
 #endif // Object_h__
