@@ -2,8 +2,9 @@
 #include "Object.h"
 #include "SceneMgr.h"
 
-CObject::CObject(OBJECTTYPE ObjectType)
-	: m_ObjectType(ObjectType)
+CObject::CObject(OBJECT_TYPE ObjType, OBJECT_TEAM ObjTeam)
+	: m_ObjType(ObjType)
+	, m_ObjTeam(ObjTeam)
 {
 
 }
@@ -48,7 +49,7 @@ void CObject::Update(float fElapsedTime)
 	m_Pos.fX += m_fSpeed * m_Dir.fX * fTime;
 	m_Pos.fY += m_fSpeed * m_Dir.fY * fTime;
 
-	switch (m_ObjectType)
+	switch (m_ObjType)
 	{
 	case OBJECT_BUILDING:
 		UpdateBuilding(fTime);
@@ -73,27 +74,27 @@ void CObject::UpdateBuilding(float fTime)
 void CObject::UpdateCharacter(float fTime)
 {
 	// Dir 갱신
-	if (m_Pos.fX < -250.f)
+	if (m_Pos.fX < -WINCX / 2.f)
 	{
-		m_Pos.fX = -250.f;
+		m_Pos.fX = -WINCX / 2.f;
 		m_Dir.fX *= -1.f;
 	}
 
-	if (m_Pos.fX > 250.f)
+	if (m_Pos.fX > WINCX / 2.f)
 	{
-		m_Pos.fX = 250.f;
+		m_Pos.fX = WINCX / 2.f;
 		m_Dir.fX *= -1.f;
 	}
 
-	if (m_Pos.fY < -250.f)
+	if (m_Pos.fY < -WINCY / 2.f)
 	{
-		m_Pos.fY = -250.f;
+		m_Pos.fY = -WINCY / 2.f;
 		m_Dir.fY *= -1.f;
 	}
 
-	if (m_Pos.fY > 250.f)
+	if (m_Pos.fY > WINCY / 2.f)
 	{
-		m_Pos.fY = 250.f;
+		m_Pos.fY = WINCY / 2.f;
 		m_Dir.fY *= -1.f;
 	}
 }
@@ -101,10 +102,10 @@ void CObject::UpdateCharacter(float fTime)
 void CObject::UpdateBullet(float fTime)
 {
 	// 화면 밖으로 나가면 삭제
-	if ((m_Pos.fX < -250.f - m_fSize / 2.f) ||
-		(m_Pos.fX > 250.f + m_fSize / 2.f) ||
-		(m_Pos.fY < -250.f - m_fSize / 2.f) ||
-		(m_Pos.fY > 250.f + m_fSize / 2.f))
+	if ((m_Pos.fX < -WINCX / 2.f - m_fSize / 2.f) ||
+		(m_Pos.fX > WINCX / 2.f + m_fSize / 2.f) ||
+		(m_Pos.fY < -WINCY / 2.f - m_fSize / 2.f) ||
+		(m_Pos.fY > WINCY / 2.f + m_fSize / 2.f))
 	{
 		m_fLife = 0.f;
 	}
@@ -113,10 +114,10 @@ void CObject::UpdateBullet(float fTime)
 void CObject::UpdateArrow(float fTime)
 {
 	// 화면 밖으로 나가면 삭제
-	if ((m_Pos.fX < -250.f - m_fSize / 2.f) || 
-		(m_Pos.fX > 250.f + m_fSize / 2.f) ||
-		(m_Pos.fY < -250.f - m_fSize / 2.f) || 
-		(m_Pos.fY > 250.f + m_fSize / 2.f))
+	if ((m_Pos.fX < -WINCX / 2.f - m_fSize / 2.f) ||
+		(m_Pos.fX > WINCX / 2.f + m_fSize / 2.f) ||
+		(m_Pos.fY < -WINCY / 2.f - m_fSize / 2.f) ||
+		(m_Pos.fY > WINCY / 2.f + m_fSize / 2.f))
 	{
 		m_fLife = 0.f;
 	}

@@ -8,7 +8,7 @@ class Renderer;
 class CObject
 {
 public:
-	CObject(OBJECTTYPE ObjectType);
+	CObject(OBJECT_TYPE ObjType, OBJECT_TEAM ObjTeam);
 	~CObject();
 
 private:
@@ -48,7 +48,8 @@ private:
 	VECTOR		m_TargetPos;
 	RECT		m_Rect;
 	COLOR		m_Color;
-	OBJECTTYPE	m_ObjectType;
+	OBJECT_TYPE	m_ObjType;
+	OBJECT_TEAM m_ObjTeam;
 	
 public:
 	void		Init();
@@ -70,7 +71,8 @@ public:
 	VECTOR		GetTargetPos() { return m_TargetPos; }
 	RECT		GetRect() { return m_Rect; }
 	float		GetLife() { return m_fLife; }
-	OBJECTTYPE	GetObjectType() { return m_ObjectType; }
+	OBJECT_TYPE	GetObjType() { return m_ObjType; }
+	OBJECT_TEAM GetObjTeam() { return m_ObjTeam; }
 	int			GetParentNum() { return m_iParentNum; }
 	float		GetTimeTerm_Bullet() { return m_fTimeTerm_Bullet; }
 	float		GetTimeTerm_Arrow() { return m_fTimeTerm_Arrow; }

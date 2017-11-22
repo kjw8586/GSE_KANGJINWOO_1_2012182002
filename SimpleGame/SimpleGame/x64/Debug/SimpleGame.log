@@ -1,3 +1,9 @@
-﻿  Object.cpp
+﻿  SimpleGame.cpp
+  SceneMgr.cpp
+c:\users\강진우\documents\github\gse_kangjinwoo_1_2012182002\simplegame\simplegame\scenemgr.cpp(104): warning C4244: '초기화 중': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\강진우\documents\github\gse_kangjinwoo_1_2012182002\simplegame\simplegame\scenemgr.cpp(441): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+  코드를 생성하고 있습니다...
+  건너뛰고 있습니다... (관련된 변경 내용 없음)
+  Object.cpp
   SimpleGame.vcxproj -> C:\Users\강진우\Documents\GitHub\GSE_KANGJINWOO_1_2012182002\SimpleGame\x64\Debug\SimpleGame.exe
   SimpleGame.vcxproj -> C:\Users\강진우\Documents\GitHub\GSE_KANGJINWOO_1_2012182002\SimpleGame\x64\Debug\SimpleGame.pdb (Partial PDB)

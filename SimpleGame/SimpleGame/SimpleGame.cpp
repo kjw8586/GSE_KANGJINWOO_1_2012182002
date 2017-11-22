@@ -14,22 +14,23 @@ but WITHOUT ANY WARRANTY.
 
 #include "SceneMgr.h"
 
-#define WINCX 500
-#define WINCY 500
-
 CSceneMgr* g_SceneMgr = NULL;
 
 DWORD g_prevTime = 0;
 bool g_LButtonDown = false;
+float g_fTimeTerm_CreateCharacter_Team2 = 7.f; // 최초에 한 번은 바로 찍힐 수 있도록 
 
 void RenderScene(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
+	glClearColor(0.0f, 0.f, 0.f, 1.0f);
 
 	DWORD currTime = timeGetTime();
 	DWORD elapsedTime = currTime - g_prevTime;
 	g_prevTime = currTime;
+
+	float fTime = elapsedTime / 1000.f;
+	g_fTimeTerm_CreateCharacter_Team2 += fTime;
 
 	g_SceneMgr->Update(float(elapsedTime));
 	g_SceneMgr->Render();
@@ -55,9 +56,17 @@ void MouseInput(int button, int state, int x, int y)
 	{
 		if (g_LButtonDown)
 		{
-			if (g_SceneMgr->GetCharacterCount() < 100)
+			if (g_SceneMgr->GetCharacterCount() < 1000)
 			{
-				g_SceneMgr->CreateObjects(float(x - WINCX / 2.f), float(-y + WINCY / 2.f), OBJECT_CHARACTER);
+				float fX = float(x - WINCX / 2.f);
+				float fY = float(-y + WINCY / 2.f);
+
+				if (fY < 0 && g_fTimeTerm_CreateCharacter_Team2 > 7.f)
+				{
+					g_SceneMgr->CreateObjects(fX, fY, OBJECT_CHARACTER, OBJECT_TEAM2);
+
+					g_fTimeTerm_CreateCharacter_Team2 = 0.f;
+				}
 			}
 
 			g_LButtonDown = false;
@@ -83,7 +92,7 @@ int main(int argc, char **argv)
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(0, 0);
-	glutInitWindowSize(500, 500);
+	glutInitWindowSize(WINCX, WINCY);
 	glutCreateWindow("Game Software Engineering KPU");
 
 	glewInit();
