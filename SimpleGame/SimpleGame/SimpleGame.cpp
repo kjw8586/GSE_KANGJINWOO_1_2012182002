@@ -61,7 +61,7 @@ void MouseInput(int button, int state, int x, int y)
 				float fX = float(x - WINCX / 2.f);
 				float fY = float(-y + WINCY / 2.f);
 
-				if (fY < 0 && g_fTimeTerm_CreateCharacter_Team2 > 7.f)
+				if (fY < 0 /*&& g_fTimeTerm_CreateCharacter_Team2 > 1.f*/)
 				{
 					g_SceneMgr->CreateObjects(fX, fY, OBJECT_CHARACTER, OBJECT_TEAM2);
 

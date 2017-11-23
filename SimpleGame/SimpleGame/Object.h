@@ -40,6 +40,7 @@ private:
 	float		m_fSize;
 	float		m_fSpeed;
 	float		m_fLife;
+	float		m_fMaxLife;
 	float		m_fLifeTime;
 	float		m_fTimeTerm_Bullet;
 	float		m_fTimeTerm_Arrow;
@@ -70,6 +71,7 @@ public:
 	VECTOR		GetDir() { return m_Dir; }
 	VECTOR		GetTargetPos() { return m_TargetPos; }
 	RECT		GetRect() { return m_Rect; }
+	float		GetMaxLife() { return m_fMaxLife; }
 	float		GetLife() { return m_fLife; }
 	OBJECT_TYPE	GetObjType() { return m_ObjType; }
 	OBJECT_TEAM GetObjTeam() { return m_ObjTeam; }
@@ -86,6 +88,7 @@ public:
 	void		SetTargetPos(float fTargetPosX, float fTargetPosY, float fTargetPosZ = 0.f);
 	void		SetRect(float fTop, float fBottom, float fLeft, float fRight);
 	void		SetLife(float fLife);
+	void		SetMaxLife(float fMaxLife);
 	void		SetDead();
 	void		SetParentNum(int iParentNum);
 	void		SetTimeTerm_Bullet(float fTime);

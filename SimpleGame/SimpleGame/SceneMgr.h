@@ -56,6 +56,7 @@ public:
 	void		CollisionCharacterAndBullet();
 	void		CollisionBuildingAndArrow();
 	void		CollisionCharacterAndArrow();
+	void		CollisionBuildingAndBullet();
 
 public:
 	int			GetBuildingCount() { return m_BuildingCount; }

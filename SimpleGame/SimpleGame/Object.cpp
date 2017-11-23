@@ -175,6 +175,11 @@ void CObject::SetRect(float fTop, float fBottom, float fLeft, float fRight)
 	m_Rect.fRight = fRight;
 }
 
+void CObject::SetMaxLife(float fMaxLife)
+{
+	m_fMaxLife = fMaxLife;
+}
+
 void CObject::SetLife(float fLife)
 {
 	m_fLife = fLife;

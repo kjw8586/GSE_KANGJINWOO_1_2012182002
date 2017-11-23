@@ -3,6 +3,11 @@
 #include "Object.h"
 #include "Renderer.h"
 
+#define RENDER_LEVEL_GOD 0.f
+#define RENDER_LEVEL_SKY 0.1f
+#define RENDER_LEVEL_GROUND 0.2f
+#define RENDER_LEVEL_UNDERGROUND 0.3f
+
 CSceneMgr::CSceneMgr()
 {
 	// Objects
@@ -68,8 +73,8 @@ void CSceneMgr::Init()
 	// Objects
 	for (int i = 0; i < 3; ++i)
 	{
-		CreateObjects(-150.f + 150.f * i, 300.f, OBJECT_BUILDING, OBJECT_TEAM1);
-		CreateObjects(-150.f + 150.f * i, -300.f, OBJECT_BUILDING, OBJECT_TEAM2);
+		CreateObjects(-150.f + 150.f * i, 250.f, OBJECT_BUILDING, OBJECT_TEAM1);
+		CreateObjects(-150.f + 150.f * i, -250.f, OBJECT_BUILDING, OBJECT_TEAM2);
 	}
 
 	// Renderer
@@ -98,10 +103,10 @@ void CSceneMgr::Update(float fElapsedTime)
 
 	CheckObjectsLife();
 
-	if (m_fTimeTerm_CreateCharacter_Team1 > 5.f)
+	if (m_fTimeTerm_CreateCharacter_Team1 > 1.f)
 	{
-		float fRandomX = rand() % WINCX - 250.f;
-		float fRandomY = rand() % (WINCY / 2);
+		float fRandomX = float(rand() % WINCX - 250.f);
+		float fRandomY = float(rand() % (WINCY / 2));
 
 		CreateObjects(fRandomX, fRandomY, OBJECT_CHARACTER, OBJECT_TEAM1);
 
@@ -114,7 +119,7 @@ void CSceneMgr::Update(float fElapsedTime)
 		{
 			m_Building[i]->Update(fElapsedTime);
 
-			if (m_Building[i]->GetTimeTerm_Bullet() > 10.f)
+			if (m_Building[i]->GetTimeTerm_Bullet() > 2.f)
 			{
 				float fX = m_Building[i]->GetPos().fX;
 				float fY = m_Building[i]->GetPos().fY;
@@ -131,7 +136,7 @@ void CSceneMgr::Update(float fElapsedTime)
 		{
 			m_Character[i]->Update(fElapsedTime);
 
-			if (m_Character[i]->GetTimeTerm_Arrow() > 3.f)
+			if (m_Character[i]->GetTimeTerm_Arrow() > 0.5f)
 			{
 				float fX = m_Character[i]->GetPos().fX;
 				float fY = m_Character[i]->GetPos().fY;
@@ -162,32 +167,51 @@ void CSceneMgr::Render()
 			if (m_Building[i]->GetObjTeam() == OBJECT_TEAM1)
 			{
 				m_Renderer->DrawTexturedRect(m_Building[i]->GetPos().fX, m_Building[i]->GetPos().fY, m_Building[i]->GetPos().fZ, m_Building[i]->GetSize(),
-					m_Building[i]->GetColor().fR, m_Building[i]->GetColor().fG, m_Building[i]->GetColor().fB, m_Building[i]->GetColor().fA, m_texBuilding_Team1);
+					m_Building[i]->GetColor().fR, m_Building[i]->GetColor().fG, m_Building[i]->GetColor().fB, m_Building[i]->GetColor().fA, m_texBuilding_Team1, RENDER_LEVEL_SKY);
+
+				m_Renderer->DrawSolidRectGauge(m_Building[i]->GetPos().fX, m_Building[i]->GetPos().fY + m_Building[i]->GetSize() / 2.f + m_Building[i]->GetSize() / 5.f, m_Building[i]->GetPos().fZ,
+					m_Building[i]->GetSize() * 1.4f, m_Building[i]->GetSize() / 6.f, 1.f, 0.f, 0.f, 1.f, m_Building[i]->GetLife() / m_Building[i]->GetMaxLife(), RENDER_LEVEL_GOD);
 			}
 			else
 			{
 				m_Renderer->DrawTexturedRect(m_Building[i]->GetPos().fX, m_Building[i]->GetPos().fY, m_Building[i]->GetPos().fZ, m_Building[i]->GetSize(),
-					m_Building[i]->GetColor().fR, m_Building[i]->GetColor().fG, m_Building[i]->GetColor().fB, m_Building[i]->GetColor().fA, m_texBuilding_Team2);
+					m_Building[i]->GetColor().fR, m_Building[i]->GetColor().fG, m_Building[i]->GetColor().fB, m_Building[i]->GetColor().fA, m_texBuilding_Team2, RENDER_LEVEL_SKY);
 
+				m_Renderer->DrawSolidRectGauge(m_Building[i]->GetPos().fX, m_Building[i]->GetPos().fY + m_Building[i]->GetSize() / 2.f + m_Building[i]->GetSize() / 5.f, m_Building[i]->GetPos().fZ,
+					m_Building[i]->GetSize() * 1.4f, m_Building[i]->GetSize() / 6.f, 0.f, 0.f, 1.f, 1.f, m_Building[i]->GetLife() / m_Building[i]->GetMaxLife(), RENDER_LEVEL_GOD);
 			}
 		}
 
 		if (m_Character[i] != NULL)
 		{
-			m_Renderer->DrawSolidRect(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY, m_Character[i]->GetPos().fZ, m_Character[i]->GetSize(),
-				m_Character[i]->GetColor().fR, m_Character[i]->GetColor().fG, m_Character[i]->GetColor().fB, m_Character[i]->GetColor().fA);
+			if (m_Character[i]->GetObjTeam() == OBJECT_TEAM1)
+			{
+				m_Renderer->DrawSolidRect(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY, m_Character[i]->GetPos().fZ, m_Character[i]->GetSize(),
+					m_Character[i]->GetColor().fR, m_Character[i]->GetColor().fG, m_Character[i]->GetColor().fB, m_Character[i]->GetColor().fA, RENDER_LEVEL_GROUND);
+
+				m_Renderer->DrawSolidRectGauge(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY + m_Character[i]->GetSize() / 2.f + m_Character[i]->GetSize() / 5.f, m_Character[i]->GetPos().fZ,
+					m_Character[i]->GetSize() * 1.4f, m_Character[i]->GetSize() / 6.f, 1.f, 0.f, 0.f, 1.f, m_Character[i]->GetLife() / m_Character[i]->GetMaxLife(), RENDER_LEVEL_GOD);
+			}
+			else
+			{
+				m_Renderer->DrawSolidRect(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY, m_Character[i]->GetPos().fZ, m_Character[i]->GetSize(),
+					m_Character[i]->GetColor().fR, m_Character[i]->GetColor().fG, m_Character[i]->GetColor().fB, m_Character[i]->GetColor().fA, RENDER_LEVEL_GROUND);
+
+				m_Renderer->DrawSolidRectGauge(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY + m_Character[i]->GetSize() / 2.f + m_Character[i]->GetSize() / 5.f, m_Character[i]->GetPos().fZ,
+					m_Character[i]->GetSize() * 1.4f, m_Character[i]->GetSize() / 6.f, 0.f, 0.f, 1.f, 1.f, m_Character[i]->GetLife() / m_Character[i]->GetMaxLife(), RENDER_LEVEL_GOD);
+			}
 		}
 
 		if (m_Bullet[i] != NULL)
 		{
 			m_Renderer->DrawSolidRect(m_Bullet[i]->GetPos().fX, m_Bullet[i]->GetPos().fY, m_Bullet[i]->GetPos().fZ, m_Bullet[i]->GetSize(),
-				m_Bullet[i]->GetColor().fR, m_Bullet[i]->GetColor().fG, m_Bullet[i]->GetColor().fB, m_Bullet[i]->GetColor().fA);
+				m_Bullet[i]->GetColor().fR, m_Bullet[i]->GetColor().fG, m_Bullet[i]->GetColor().fB, m_Bullet[i]->GetColor().fA, RENDER_LEVEL_UNDERGROUND);
 		}
 
 		if (m_Arrow[i] != NULL)
 		{
 			m_Renderer->DrawSolidRect(m_Arrow[i]->GetPos().fX, m_Arrow[i]->GetPos().fY, m_Arrow[i]->GetPos().fZ, m_Arrow[i]->GetSize(),
-				m_Arrow[i]->GetColor().fR, m_Arrow[i]->GetColor().fG, m_Arrow[i]->GetColor().fB, m_Arrow[i]->GetColor().fA);
+				m_Arrow[i]->GetColor().fR, m_Arrow[i]->GetColor().fG, m_Arrow[i]->GetColor().fB, m_Arrow[i]->GetColor().fA, RENDER_LEVEL_UNDERGROUND);
 		}
 	}
 }
@@ -324,6 +348,38 @@ void CSceneMgr::CollisionCharacterAndArrow()
 	}
 }
 
+void CSceneMgr::CollisionBuildingAndBullet()
+{
+	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
+	{
+		if (m_Building[i] == NULL)
+			continue;
+
+		for (int j = 0; j < MAX_OBJECTS_COUNT; ++j)
+		{
+			if (m_Bullet[j] == NULL)
+				continue;
+
+			if (m_Bullet[j]->GetParentNum() == i)			// 자신을 생성한 부모일 경우 충돌 처리 안함
+				continue;
+
+			if (m_Bullet[j]->GetObjTeam() == m_Building[i]->GetObjTeam())
+				continue;
+
+			if (CheckCollision(m_Building[i], m_Bullet[j]))
+			{
+				float fDamage = m_Bullet[j]->GetLife();
+
+				m_Building[i]->DecreaseLife(fDamage);
+				m_Bullet[j]->SetDead();
+
+				if (m_Building[i]->GetLife() <= 0.f)
+					break;
+			}
+		}
+	}
+}
+
 void CSceneMgr::CreateObjects(float fX, float fY, OBJECT_TYPE ObjType, OBJECT_TEAM ObjTeam, int iParentNum /* = -1 */)
 {
 	int iNum = 0;
@@ -349,6 +405,8 @@ void CSceneMgr::CreateObjects(float fX, float fY, OBJECT_TYPE ObjType, OBJECT_TE
 		m_Building[iNum]->SetSize(100.f);
 		m_Building[iNum]->SetSpeed(0.f);
 		m_Building[iNum]->SetLife(500.f);
+		m_Building[iNum]->SetMaxLife(500.f);
+		m_Building[iNum]->SetColor(1.f, 1.f, 1.f, 1.f);
 
 		++m_BuildingCount;
 		break;
@@ -370,6 +428,7 @@ void CSceneMgr::CreateObjects(float fX, float fY, OBJECT_TYPE ObjType, OBJECT_TE
 		m_Character[iNum]->SetPos(fX, fY);
 		m_Character[iNum]->SetSize(10.f);
 		m_Character[iNum]->SetSpeed(300.f);
+		m_Character[iNum]->SetMaxLife(300.f);
 		m_Character[iNum]->SetLife(10.f);
 
 		if (ObjTeam == OBJECT_TEAM1)
@@ -402,6 +461,7 @@ void CSceneMgr::CreateObjects(float fX, float fY, OBJECT_TYPE ObjType, OBJECT_TE
 		m_Bullet[iNum]->SetSize(2.f);
 		m_Bullet[iNum]->SetSpeed(600.f);
 		m_Bullet[iNum]->SetLife(20.f);
+		m_Bullet[iNum]->SetMaxLife(20.f);
 		m_Bullet[iNum]->SetParentNum(iParentNum);
 
 		if (ObjTeam == OBJECT_TEAM1)
@@ -434,11 +494,12 @@ void CSceneMgr::CreateObjects(float fX, float fY, OBJECT_TYPE ObjType, OBJECT_TE
 		m_Arrow[iNum]->SetSize(2.f);
 		m_Arrow[iNum]->SetSpeed(100.f);
 		m_Arrow[iNum]->SetLife(10.f);
+		m_Arrow[iNum]->SetMaxLife(10.f);
 		m_Arrow[iNum]->SetParentNum(iParentNum);
 
 		if (ObjTeam == OBJECT_TEAM1)
 		{
-			m_Arrow[iNum]->SetColor(0.5, 0.2, 0.7, 1.f);
+			m_Arrow[iNum]->SetColor(0.5f, 0.2f, 0.7f, 1.f);
 		}
 		else
 		{
