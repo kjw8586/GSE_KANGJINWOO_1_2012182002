@@ -16,16 +16,26 @@ CObject::~CObject()
 
 void CObject::Init()
 {
+	int iDirY = 0;
+
+	// TEAM1은 아래 방향으로만 발사, TEAM2는 위 방향으로만 발사
+	if (m_ObjTeam == OBJECT_TEAM1)
+		iDirY = -1;
+	else
+		iDirY = 1;
+
+	// 방향 설정 (X방향 제곱과 Y방향 제곱의 합이 1을 유지하면서 랜덤하게)
+	m_Dir.fX = float((rand() % 1001 - 500)) / 500.f;
+	m_Dir.fY = float(iDirY * sqrtf(1.f - m_Dir.fX * m_Dir.fX));
+	m_Dir.fZ = 0.f;
+
+	m_iSpriteX = 0;
+
 	m_fSpeed = 0.f;
 	m_fTimeTerm_Bullet = 0.f;
 	m_fTimeTerm_Arrow = 0.f;
-
-	do
-	{
-		m_Dir.fX = float(rand() % 3 - 1);
-		m_Dir.fY = float(rand() % 3 - 1);
-		m_Dir.fZ = 0.f;
-	} while (m_Dir.fX == 0 && m_Dir.fY == 0);
+	m_fTime_SpriteX = 0.f;
+	m_fParticleTime = 0.f;
 
 	m_TargetPos.fX = 0.f;
 	m_TargetPos.fY = 0.f;
@@ -73,6 +83,19 @@ void CObject::UpdateBuilding(float fTime)
 
 void CObject::UpdateCharacter(float fTime)
 {
+	// SpriteX 증가
+	m_fTime_SpriteX += fTime;
+
+	if (m_fTime_SpriteX >= 0.1f)
+	{
+		m_iSpriteX += 1;
+
+		m_fTime_SpriteX = 0.f;
+	}
+
+	if (m_iSpriteX >= 8)
+		m_iSpriteX = 0;
+
 	// Dir 갱신
 	if (m_Pos.fX < -WINCX / 2.f)
 	{
@@ -101,6 +124,9 @@ void CObject::UpdateCharacter(float fTime)
 
 void CObject::UpdateBullet(float fTime)
 {
+	// ParticleTime 갱신
+	m_fParticleTime += fTime;
+
 	// 화면 밖으로 나가면 삭제
 	if ((m_Pos.fX < -WINCX / 2.f - m_fSize / 2.f) ||
 		(m_Pos.fX > WINCX / 2.f + m_fSize / 2.f) ||

@@ -7,6 +7,7 @@
 #define RENDER_LEVEL_SKY 0.1f
 #define RENDER_LEVEL_GROUND 0.2f
 #define RENDER_LEVEL_UNDERGROUND 0.3f
+#define RENDER_LEVEL_BACKGROUND 0.4f
 
 CSceneMgr::CSceneMgr()
 {
@@ -87,6 +88,11 @@ void CSceneMgr::Init()
 
 	m_texBuilding_Team1 = m_Renderer->CreatePngTexture("./Resources/Building_Team1.png");
 	m_texBuilding_Team2 = m_Renderer->CreatePngTexture("./Resources/Building_Team2.png");
+	m_texBackground = m_Renderer->CreatePngTexture("./Resources/Background2.png");
+	m_texCharacter_Team1 = m_Renderer->CreatePngTexture("./Resources/Bird_Black.png");
+	m_texCharacter_Team2 = m_Renderer->CreatePngTexture("./Resources/Bird_White.png");
+	m_texBullet_Team1 = m_Renderer->CreatePngTexture("./Resources/Bullet_Particle_Team1.png");
+	m_texBullet_Team2 = m_Renderer->CreatePngTexture("./Resources/Bullet_Particle_Team2.png");
 }
 
 void CSceneMgr::Update(float fElapsedTime)
@@ -97,6 +103,7 @@ void CSceneMgr::Update(float fElapsedTime)
 
 	// Objects
 	CollisionBuildingAndCharacter();
+	CollisionBuildingAndBullet();
 	CollisionCharacterAndBullet();
 	CollisionBuildingAndArrow();
 	CollisionCharacterAndArrow();
@@ -160,6 +167,8 @@ void CSceneMgr::Update(float fElapsedTime)
 void CSceneMgr::Render()
 {
 	// Renderer
+	m_Renderer->DrawTexturedRect(0.f, 0.f, 0.f, 800.f, 1.f, 1.f, 1.f, 1.f, m_texBackground, RENDER_LEVEL_BACKGROUND);
+
 	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i)
 	{
 		if (m_Building[i] != NULL)
@@ -186,16 +195,18 @@ void CSceneMgr::Render()
 		{
 			if (m_Character[i]->GetObjTeam() == OBJECT_TEAM1)
 			{
-				m_Renderer->DrawSolidRect(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY, m_Character[i]->GetPos().fZ, m_Character[i]->GetSize(),
-					m_Character[i]->GetColor().fR, m_Character[i]->GetColor().fG, m_Character[i]->GetColor().fB, m_Character[i]->GetColor().fA, RENDER_LEVEL_GROUND);
+				m_Renderer->DrawTexturedRectSeq(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY, m_Character[i]->GetPos().fZ, m_Character[i]->GetSize(),
+					m_Character[i]->GetColor().fR, m_Character[i]->GetColor().fG, m_Character[i]->GetColor().fB, m_Character[i]->GetColor().fA, m_texCharacter_Team1, m_Character[i]->GetSpriteX(), 0, 8, 1, RENDER_LEVEL_GROUND);
+
+				float fGauge = m_Character[i]->GetLife() / m_Character[i]->GetMaxLife();
 
 				m_Renderer->DrawSolidRectGauge(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY + m_Character[i]->GetSize() / 2.f + m_Character[i]->GetSize() / 5.f, m_Character[i]->GetPos().fZ,
-					m_Character[i]->GetSize() * 1.4f, m_Character[i]->GetSize() / 6.f, 1.f, 0.f, 0.f, 1.f, m_Character[i]->GetLife() / m_Character[i]->GetMaxLife(), RENDER_LEVEL_GOD);
+					m_Character[i]->GetSize() * 1.4f, m_Character[i]->GetSize() / 6.f, 1.f, 0.f, 0.f, 1.f, fGauge, RENDER_LEVEL_GOD);
 			}
 			else
 			{
-				m_Renderer->DrawSolidRect(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY, m_Character[i]->GetPos().fZ, m_Character[i]->GetSize(),
-					m_Character[i]->GetColor().fR, m_Character[i]->GetColor().fG, m_Character[i]->GetColor().fB, m_Character[i]->GetColor().fA, RENDER_LEVEL_GROUND);
+				m_Renderer->DrawTexturedRectSeq(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY, m_Character[i]->GetPos().fZ, m_Character[i]->GetSize(),
+					m_Character[i]->GetColor().fR, m_Character[i]->GetColor().fG, m_Character[i]->GetColor().fB, m_Character[i]->GetColor().fA, m_texCharacter_Team2, m_Character[i]->GetSpriteX(), 0, 8, 1, RENDER_LEVEL_GROUND);
 
 				m_Renderer->DrawSolidRectGauge(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY + m_Character[i]->GetSize() / 2.f + m_Character[i]->GetSize() / 5.f, m_Character[i]->GetPos().fZ,
 					m_Character[i]->GetSize() * 1.4f, m_Character[i]->GetSize() / 6.f, 0.f, 0.f, 1.f, 1.f, m_Character[i]->GetLife() / m_Character[i]->GetMaxLife(), RENDER_LEVEL_GOD);
@@ -204,8 +215,16 @@ void CSceneMgr::Render()
 
 		if (m_Bullet[i] != NULL)
 		{
-			m_Renderer->DrawSolidRect(m_Bullet[i]->GetPos().fX, m_Bullet[i]->GetPos().fY, m_Bullet[i]->GetPos().fZ, m_Bullet[i]->GetSize(),
-				m_Bullet[i]->GetColor().fR, m_Bullet[i]->GetColor().fG, m_Bullet[i]->GetColor().fB, m_Bullet[i]->GetColor().fA, RENDER_LEVEL_UNDERGROUND);
+			if (m_Bullet[i]->GetObjTeam() == OBJECT_TEAM1)
+			{
+				m_Renderer->DrawParticle(m_Bullet[i]->GetPos().fX, m_Bullet[i]->GetPos().fY, m_Bullet[i]->GetPos().fZ, m_Bullet[i]->GetSize(),
+					m_Bullet[i]->GetColor().fR, m_Bullet[i]->GetColor().fG, m_Bullet[i]->GetColor().fB, m_Bullet[i]->GetColor().fA, -(m_Bullet[i]->GetDir().fX), -(m_Bullet[i]->GetDir().fY), m_texBullet_Team1, m_Bullet[i]->GetParticleTime());
+			}
+			else
+			{
+				m_Renderer->DrawParticle(m_Bullet[i]->GetPos().fX, m_Bullet[i]->GetPos().fY, m_Bullet[i]->GetPos().fZ, m_Bullet[i]->GetSize(),
+					m_Bullet[i]->GetColor().fR, m_Bullet[i]->GetColor().fG, m_Bullet[i]->GetColor().fB, m_Bullet[i]->GetColor().fA, -(m_Bullet[i]->GetDir().fX), -(m_Bullet[i]->GetDir().fY), m_texBullet_Team2, m_Bullet[i]->GetParticleTime());
+			}
 		}
 
 		if (m_Arrow[i] != NULL)
@@ -426,9 +445,9 @@ void CSceneMgr::CreateObjects(float fX, float fY, OBJECT_TYPE ObjType, OBJECT_TE
 		m_Character[iNum] = new CObject(OBJECT_CHARACTER, ObjTeam);
 		m_Character[iNum]->Init();
 		m_Character[iNum]->SetPos(fX, fY);
-		m_Character[iNum]->SetSize(10.f);
-		m_Character[iNum]->SetSpeed(300.f);
-		m_Character[iNum]->SetMaxLife(300.f);
+		m_Character[iNum]->SetSize(50.f);
+		m_Character[iNum]->SetSpeed(150.f);
+		m_Character[iNum]->SetMaxLife(10.f);
 		m_Character[iNum]->SetLife(10.f);
 
 		if (ObjTeam == OBJECT_TEAM1)
@@ -458,20 +477,12 @@ void CSceneMgr::CreateObjects(float fX, float fY, OBJECT_TYPE ObjType, OBJECT_TE
 		m_Bullet[iNum] = new CObject(OBJECT_BULLET, ObjTeam);
 		m_Bullet[iNum]->Init();
 		m_Bullet[iNum]->SetPos(fX, fY);
-		m_Bullet[iNum]->SetSize(2.f);
-		m_Bullet[iNum]->SetSpeed(600.f);
+		m_Bullet[iNum]->SetSize(6.f);
+		m_Bullet[iNum]->SetSpeed(200.f);
 		m_Bullet[iNum]->SetLife(20.f);
 		m_Bullet[iNum]->SetMaxLife(20.f);
 		m_Bullet[iNum]->SetParentNum(iParentNum);
-
-		if (ObjTeam == OBJECT_TEAM1)
-		{
-			m_Bullet[iNum]->SetColor(1.f, 0.f, 0.f, 1.f);
-		}
-		else
-		{
-			m_Bullet[iNum]->SetColor(0.f, 0.f, 1.f, 1.f);
-		}
+		m_Bullet[iNum]->SetColor(1.f, 1.f, 1.f, 1.f);
 
 		++m_BulletCount;
 		break;
@@ -491,8 +502,8 @@ void CSceneMgr::CreateObjects(float fX, float fY, OBJECT_TYPE ObjType, OBJECT_TE
 		m_Arrow[iNum] = new CObject(OBJECT_ARROW, ObjTeam);
 		m_Arrow[iNum]->Init();
 		m_Arrow[iNum]->SetPos(fX, fY);
-		m_Arrow[iNum]->SetSize(2.f);
-		m_Arrow[iNum]->SetSpeed(100.f);
+		m_Arrow[iNum]->SetSize(4.f);
+		m_Arrow[iNum]->SetSpeed(200.f);
 		m_Arrow[iNum]->SetLife(10.f);
 		m_Arrow[iNum]->SetMaxLife(10.f);
 		m_Arrow[iNum]->SetParentNum(iParentNum);

@@ -34,11 +34,15 @@ private:
 	int			m_CharacterCount;
 	int			m_BulletCount;
 	int			m_ArrowCount;
+	int			m_texBackground;
 	int			m_texBuilding_Team1;
 	int			m_texBuilding_Team2;
-	int			m_texCharacter;
-	int			m_texBullet;
-	int			m_texArrow;
+	int			m_texCharacter_Team1;
+	int			m_texCharacter_Team2;
+	int			m_texBullet_Team1;
+	int			m_texBullet_Team2;
+	int			m_texArrow_Team1;
+	int			m_texArrow_Team2;
 	float		m_fTimeTerm_CreateCharacter_Team1;
 private:
 	CObject*	m_Building[MAX_OBJECTS_COUNT];

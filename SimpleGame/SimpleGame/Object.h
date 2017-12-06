@@ -37,6 +37,8 @@ private:
 
 private:
 	int			m_iParentNum;
+	int			m_iSpriteX;
+	float		m_fTime_SpriteX;
 	float		m_fSize;
 	float		m_fSpeed;
 	float		m_fLife;
@@ -44,6 +46,7 @@ private:
 	float		m_fLifeTime;
 	float		m_fTimeTerm_Bullet;
 	float		m_fTimeTerm_Arrow;
+	float		m_fParticleTime;
 	VECTOR		m_Pos;
 	VECTOR		m_Dir;
 	VECTOR		m_TargetPos;
@@ -78,6 +81,8 @@ public:
 	int			GetParentNum() { return m_iParentNum; }
 	float		GetTimeTerm_Bullet() { return m_fTimeTerm_Bullet; }
 	float		GetTimeTerm_Arrow() { return m_fTimeTerm_Arrow; }
+	int			GetSpriteX() { return m_iSpriteX; }
+	float		GetParticleTime() { return m_fParticleTime; }
 
 public:
 	void		SetSize(float fSize);
