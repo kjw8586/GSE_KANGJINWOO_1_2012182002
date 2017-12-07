@@ -22,6 +22,7 @@ enum OBJECT_TEAM
 
 class CObject;
 class Renderer;
+class Sound;
 
 class CSceneMgr
 {
@@ -39,17 +40,22 @@ private:
 	int			m_texBuilding_Team2;
 	int			m_texCharacter_Team1;
 	int			m_texCharacter_Team2;
+	int			m_texCharacter_Reverse_Team1;
+	int			m_texCharacter_Reverse_Team2;
 	int			m_texBullet_Team1;
 	int			m_texBullet_Team2;
 	int			m_texArrow_Team1;
 	int			m_texArrow_Team2;
+	int			m_soundBackground;
 	float		m_fTimeTerm_CreateCharacter_Team1;
+
 private:
 	CObject*	m_Building[MAX_OBJECTS_COUNT];
 	CObject*	m_Character[MAX_OBJECTS_COUNT];
 	CObject*	m_Bullet[MAX_OBJECTS_COUNT];
 	CObject*	m_Arrow[MAX_OBJECTS_COUNT];
 	Renderer*	m_Renderer;
+	Sound*		m_Sound;
 
 public:
 	void		Init();

@@ -2,6 +2,7 @@
 #include "SceneMgr.h"
 #include "Object.h"
 #include "Renderer.h"
+#include "Sound.h"
 
 #define RENDER_LEVEL_GOD 0.f
 #define RENDER_LEVEL_SKY 0.1f
@@ -88,11 +89,17 @@ void CSceneMgr::Init()
 
 	m_texBuilding_Team1 = m_Renderer->CreatePngTexture("./Resources/Building_Team1.png");
 	m_texBuilding_Team2 = m_Renderer->CreatePngTexture("./Resources/Building_Team2.png");
-	m_texBackground = m_Renderer->CreatePngTexture("./Resources/Background2.png");
+	m_texBackground = m_Renderer->CreatePngTexture("./Resources/Background.png");
 	m_texCharacter_Team1 = m_Renderer->CreatePngTexture("./Resources/Bird_Black.png");
 	m_texCharacter_Team2 = m_Renderer->CreatePngTexture("./Resources/Bird_White.png");
+	m_texCharacter_Reverse_Team1 = m_Renderer->CreatePngTexture("./Resources/Bird_Black_Reverse.png");
+	m_texCharacter_Reverse_Team2 = m_Renderer->CreatePngTexture("./Resources/Bird_White_Reverse.png");
 	m_texBullet_Team1 = m_Renderer->CreatePngTexture("./Resources/Bullet_Particle_Team1.png");
 	m_texBullet_Team2 = m_Renderer->CreatePngTexture("./Resources/Bullet_Particle_Team2.png");
+
+	m_Sound = new Sound();
+	m_soundBackground = m_Sound->CreateSound("./Dependencies/Sound/BackgroundMusic.mp3");
+	m_Sound->PlaySound(m_soundBackground, true, 0.2f);
 }
 
 void CSceneMgr::Update(float fElapsedTime)
@@ -195,18 +202,34 @@ void CSceneMgr::Render()
 		{
 			if (m_Character[i]->GetObjTeam() == OBJECT_TEAM1)
 			{
-				m_Renderer->DrawTexturedRectSeq(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY, m_Character[i]->GetPos().fZ, m_Character[i]->GetSize(),
-					m_Character[i]->GetColor().fR, m_Character[i]->GetColor().fG, m_Character[i]->GetColor().fB, m_Character[i]->GetColor().fA, m_texCharacter_Team1, m_Character[i]->GetSpriteX(), 0, 8, 1, RENDER_LEVEL_GROUND);
-
-				float fGauge = m_Character[i]->GetLife() / m_Character[i]->GetMaxLife();
+				// 캐릭터가 움직일 때 애니메이션을 방향에 맞게 설정 (x축 양의 방향으로 움직일 때와 음의 방향으로 움직일 때 차이)
+				if (m_Character[i]->GetDir().fX > 0)
+				{
+					m_Renderer->DrawTexturedRectSeq(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY, m_Character[i]->GetPos().fZ, m_Character[i]->GetSize(),
+						m_Character[i]->GetColor().fR, m_Character[i]->GetColor().fG, m_Character[i]->GetColor().fB, m_Character[i]->GetColor().fA, m_texCharacter_Team1, m_Character[i]->GetSpriteX(), 0, 8, 1, RENDER_LEVEL_GROUND);
+				}
+				else
+				{
+					m_Renderer->DrawTexturedRectSeq(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY, m_Character[i]->GetPos().fZ, m_Character[i]->GetSize(),
+						m_Character[i]->GetColor().fR, m_Character[i]->GetColor().fG, m_Character[i]->GetColor().fB, m_Character[i]->GetColor().fA, m_texCharacter_Reverse_Team1, m_Character[i]->GetSpriteX(), 0, 8, 1, RENDER_LEVEL_GROUND);
+				}
 
 				m_Renderer->DrawSolidRectGauge(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY + m_Character[i]->GetSize() / 2.f + m_Character[i]->GetSize() / 5.f, m_Character[i]->GetPos().fZ,
-					m_Character[i]->GetSize() * 1.4f, m_Character[i]->GetSize() / 6.f, 1.f, 0.f, 0.f, 1.f, fGauge, RENDER_LEVEL_GOD);
+					m_Character[i]->GetSize() * 1.4f, m_Character[i]->GetSize() / 6.f, 1.f, 0.f, 0.f, 1.f, m_Character[i]->GetLife() / m_Character[i]->GetMaxLife(), RENDER_LEVEL_GOD);
 			}
 			else
 			{
-				m_Renderer->DrawTexturedRectSeq(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY, m_Character[i]->GetPos().fZ, m_Character[i]->GetSize(),
-					m_Character[i]->GetColor().fR, m_Character[i]->GetColor().fG, m_Character[i]->GetColor().fB, m_Character[i]->GetColor().fA, m_texCharacter_Team2, m_Character[i]->GetSpriteX(), 0, 8, 1, RENDER_LEVEL_GROUND);
+				// 캐릭터가 움직일 때 애니메이션을 방향에 맞게 설정 (x축 양의 방향으로 움직일 때와 음의 방향으로 움직일 때 차이) 
+				if (m_Character[i]->GetDir().fX > 0)
+				{
+					m_Renderer->DrawTexturedRectSeq(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY, m_Character[i]->GetPos().fZ, m_Character[i]->GetSize(),
+						m_Character[i]->GetColor().fR, m_Character[i]->GetColor().fG, m_Character[i]->GetColor().fB, m_Character[i]->GetColor().fA, m_texCharacter_Team2, m_Character[i]->GetSpriteX(), 0, 8, 1, RENDER_LEVEL_GROUND);
+				}
+				else
+				{
+					m_Renderer->DrawTexturedRectSeq(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY, m_Character[i]->GetPos().fZ, m_Character[i]->GetSize(),
+						m_Character[i]->GetColor().fR, m_Character[i]->GetColor().fG, m_Character[i]->GetColor().fB, m_Character[i]->GetColor().fA, m_texCharacter_Reverse_Team2, m_Character[i]->GetSpriteX(), 0, 8, 1, RENDER_LEVEL_GROUND);
+				}
 
 				m_Renderer->DrawSolidRectGauge(m_Character[i]->GetPos().fX, m_Character[i]->GetPos().fY + m_Character[i]->GetSize() / 2.f + m_Character[i]->GetSize() / 5.f, m_Character[i]->GetPos().fZ,
 					m_Character[i]->GetSize() * 1.4f, m_Character[i]->GetSize() / 6.f, 0.f, 0.f, 1.f, 1.f, m_Character[i]->GetLife() / m_Character[i]->GetMaxLife(), RENDER_LEVEL_GOD);
@@ -233,6 +256,8 @@ void CSceneMgr::Render()
 				m_Arrow[i]->GetColor().fR, m_Arrow[i]->GetColor().fG, m_Arrow[i]->GetColor().fB, m_Arrow[i]->GetColor().fA, RENDER_LEVEL_UNDERGROUND);
 		}
 	}
+
+	m_Renderer->DrawTextW(0.f, 0.f, GLUT_BITMAP_TIMES_ROMAN_24, 0.f, 0.f, 0.f, "TEXT");
 }
 
 bool CSceneMgr::CheckCollision(CObject* objA, CObject* objB)
