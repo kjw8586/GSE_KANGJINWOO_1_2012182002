@@ -40,6 +40,8 @@ void CObject::Init()
 	m_TargetPos.fX = 0.f;
 	m_TargetPos.fY = 0.f;
 	m_TargetPos.fZ = 0.f;
+
+	m_ObjState = STATE_WALK;
 }
 
 void CObject::Update(float fElapsedTime)
@@ -66,6 +68,9 @@ void CObject::Update(float fElapsedTime)
 		break;
 	case OBJECT_CHARACTER:
 		UpdateCharacter(fTime);
+		break;
+	case OBJECT_INFANTRY:
+		UpdateInfantry(fTime);
 		break;
 	case OBJECT_BULLET:
 		UpdateBullet(fTime);
@@ -119,6 +124,43 @@ void CObject::UpdateCharacter(float fTime)
 	{
 		m_Pos.fY = WINCY / 2.f;
 		m_Dir.fY *= -1.f;
+	}
+}
+
+void CObject::UpdateInfantry(float fTime)
+{
+	// SpriteX Áõ°¡
+	m_fTime_SpriteX += fTime;
+
+	if (m_fTime_SpriteX >= 0.1f)
+	{
+		m_iSpriteX += 1;
+
+		m_fTime_SpriteX = 0.f;
+	}
+
+	if (m_ObjState == STATE_WALK)
+	{
+		if (m_iSpriteX >= 12)
+			m_iSpriteX = 0;
+	}
+
+	// 
+	if (m_ObjState == STATE_WALK)
+	{
+		float fX = m_TargetPos.fX - m_Pos.fX;
+		float fY = m_TargetPos.fY - m_Pos.fY;
+		float fDistTarget = sqrtf(fX * fX + fY * fY);
+
+		if (fDistTarget < 55.f)
+		{
+			m_ObjState = STATE_ATTACK;
+
+			m_Dir.fX = 0.f;
+			m_Dir.fY = 0.f;
+
+			m_iSpriteX = 0;
+		}
 	}
 }
 
@@ -229,4 +271,14 @@ void CObject::SetTimeTerm_Bullet(float fTime)
 void CObject::SetTimeTerm_Arrow(float fTime)
 {
 	m_fTimeTerm_Arrow = fTime;
+}
+
+void CObject::SetSpriteX(int iSpriteX)
+{
+	m_iSpriteX = iSpriteX;
+}
+
+void CObject::SetState(OBJECT_STATE ObjState)
+{
+	m_ObjState = ObjState;
 }

@@ -36,30 +36,32 @@ private:
 	};
 
 private:
-	int			m_iParentNum;
-	int			m_iSpriteX;
-	float		m_fTime_SpriteX;
-	float		m_fSize;
-	float		m_fSpeed;
-	float		m_fLife;
-	float		m_fMaxLife;
-	float		m_fLifeTime;
-	float		m_fTimeTerm_Bullet;
-	float		m_fTimeTerm_Arrow;
-	float		m_fParticleTime;
-	VECTOR		m_Pos;
-	VECTOR		m_Dir;
-	VECTOR		m_TargetPos;
-	RECT		m_Rect;
-	COLOR		m_Color;
-	OBJECT_TYPE	m_ObjType;
-	OBJECT_TEAM m_ObjTeam;
-	
+	int				m_iParentNum;
+	int				m_iSpriteX;
+	float			m_fTime_SpriteX;
+	float			m_fSize;
+	float			m_fSpeed;
+	float			m_fLife;
+	float			m_fMaxLife;
+	float			m_fLifeTime;
+	float			m_fTimeTerm_Bullet;
+	float			m_fTimeTerm_Arrow;
+	float			m_fParticleTime;
+	VECTOR			m_Pos;
+	VECTOR			m_Dir;
+	VECTOR			m_TargetPos;
+	RECT			m_Rect;
+	COLOR			m_Color;
+	OBJECT_TYPE		m_ObjType;
+	OBJECT_TEAM		m_ObjTeam;
+	OBJECT_STATE	m_ObjState;
+
 public:
 	void		Init();
 	void		Update(float fElapsedTime);
 	void		UpdateBuilding(float fTime);
 	void		UpdateCharacter(float fTime);
+	void		UpdateInfantry(float fTime);
 	void		UpdateBullet(float fTime);
 	void		UpdateArrow(float fTime);
 
@@ -67,37 +69,40 @@ public:
 	void		DecreaseLife(float fDamage);
 
 public:
-	float		GetSize() { return m_fSize; }
-	VECTOR		GetPos() { return m_Pos; }
-	COLOR		GetColor() { return m_Color; }
-	float		GetSpeed() { return m_fSpeed; }
-	VECTOR		GetDir() { return m_Dir; }
-	VECTOR		GetTargetPos() { return m_TargetPos; }
-	RECT		GetRect() { return m_Rect; }
-	float		GetMaxLife() { return m_fMaxLife; }
-	float		GetLife() { return m_fLife; }
-	OBJECT_TYPE	GetObjType() { return m_ObjType; }
-	OBJECT_TEAM GetObjTeam() { return m_ObjTeam; }
-	int			GetParentNum() { return m_iParentNum; }
-	float		GetTimeTerm_Bullet() { return m_fTimeTerm_Bullet; }
-	float		GetTimeTerm_Arrow() { return m_fTimeTerm_Arrow; }
-	int			GetSpriteX() { return m_iSpriteX; }
-	float		GetParticleTime() { return m_fParticleTime; }
+	float			GetSize() { return m_fSize; }
+	VECTOR			GetPos() { return m_Pos; }
+	COLOR			GetColor() { return m_Color; }
+	float			GetSpeed() { return m_fSpeed; }
+	VECTOR			GetDir() { return m_Dir; }
+	VECTOR			GetTargetPos() { return m_TargetPos; }
+	RECT			GetRect() { return m_Rect; }
+	float			GetMaxLife() { return m_fMaxLife; }
+	float			GetLife() { return m_fLife; }
+	OBJECT_TYPE		GetObjType() { return m_ObjType; }
+	OBJECT_TEAM		GetObjTeam() { return m_ObjTeam; }
+	int				GetParentNum() { return m_iParentNum; }
+	float			GetTimeTerm_Bullet() { return m_fTimeTerm_Bullet; }
+	float			GetTimeTerm_Arrow() { return m_fTimeTerm_Arrow; }
+	int				GetSpriteX() { return m_iSpriteX; }
+	float			GetParticleTime() { return m_fParticleTime; }
+	OBJECT_STATE	GetState() { return m_ObjState; }
 
 public:
-	void		SetSize(float fSize);
-	void		SetPos(float fX, float fY, float fZ = 0.f);
-	void		SetColor(float fR, float fG, float fB, float fA);
-	void		SetSpeed(float fSpeed);
-	void		SetDir(float fDirX, float fDirY, float fDirZ);
-	void		SetTargetPos(float fTargetPosX, float fTargetPosY, float fTargetPosZ = 0.f);
-	void		SetRect(float fTop, float fBottom, float fLeft, float fRight);
-	void		SetLife(float fLife);
-	void		SetMaxLife(float fMaxLife);
-	void		SetDead();
-	void		SetParentNum(int iParentNum);
-	void		SetTimeTerm_Bullet(float fTime);
-	void		SetTimeTerm_Arrow(float fTime);
+	void			SetSize(float fSize);
+	void			SetPos(float fX, float fY, float fZ = 0.f);
+	void			SetColor(float fR, float fG, float fB, float fA);
+	void			SetSpeed(float fSpeed);
+	void			SetDir(float fDirX, float fDirY, float fDirZ);
+	void			SetTargetPos(float fTargetPosX, float fTargetPosY, float fTargetPosZ = 0.f);
+	void			SetRect(float fTop, float fBottom, float fLeft, float fRight);
+	void			SetLife(float fLife);
+	void			SetMaxLife(float fMaxLife);
+	void			SetDead();
+	void			SetParentNum(int iParentNum);
+	void			SetTimeTerm_Bullet(float fTime);
+	void			SetTimeTerm_Arrow(float fTime);
+	void			SetSpriteX(int iSpriteX);
+	void			SetState(OBJECT_STATE ObjState);
 };
 
 #endif // Object_h__

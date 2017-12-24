@@ -20,6 +20,8 @@ DWORD g_prevTime = 0;
 bool g_LButtonDown = false;
 float g_fTimeTerm_CreateCharacter_Team2 = 7.f; // 최초에 한 번은 바로 찍힐 수 있도록 
 
+OBJECT_TYPE g_Obj = OBJECT_CHARACTER;
+
 void RenderScene(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -63,7 +65,10 @@ void MouseInput(int button, int state, int x, int y)
 
 				if (fY < 0 /*&& g_fTimeTerm_CreateCharacter_Team2 > 1.f*/)
 				{
-					g_SceneMgr->CreateObjects(fX, fY, OBJECT_CHARACTER, OBJECT_TEAM2);
+					if(g_Obj == 1)
+						g_SceneMgr->CreateObjects(fX, fY, OBJECT_CHARACTER, OBJECT_TEAM2);
+					else if(g_Obj == 2)
+						g_SceneMgr->CreateObjects(fX, fY, OBJECT_INFANTRY, OBJECT_TEAM2);
 
 					g_fTimeTerm_CreateCharacter_Team2 = 0.f;
 				}
@@ -78,6 +83,11 @@ void MouseInput(int button, int state, int x, int y)
 
 void KeyInput(unsigned char key, int x, int y)
 {
+	if (key == '1')
+		g_Obj = OBJECT_CHARACTER;
+	else if (key == '2')
+		g_Obj = OBJECT_INFANTRY;
+
 	RenderScene();
 }
 
