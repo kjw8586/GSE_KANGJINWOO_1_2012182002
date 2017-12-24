@@ -54,6 +54,7 @@ private:
 	int			m_texInfantry_Attack_Team1;
 	int			m_texInfantry_Team2;
 	int			m_texInfantry_Attack_Team2;
+	int			m_texInfantry_Attack_Reverse_Team2;
 	int			m_texBullet_Team1;
 	int			m_texBullet_Team2;
 	int			m_texArrow_Team1;

@@ -116,6 +116,7 @@ void CSceneMgr::Init()
 	m_texInfantry_Team2 = m_Renderer->CreatePngTexture("./Resources/DarkSlayer.png");
 	m_texInfantry_Attack_Team1 = m_Renderer->CreatePngTexture("./Resources/Ogre_Attack.png");
 	m_texInfantry_Attack_Team2 = m_Renderer->CreatePngTexture("./Resources/DarkSlayer_Attack.png");
+	m_texInfantry_Attack_Reverse_Team2 = m_Renderer->CreatePngTexture("./Resources/DarkSlayer_Attack_Reverse.png");
 	m_texBullet_Team1 = m_Renderer->CreatePngTexture("./Resources/Bullet_Particle_Team1.png");
 	m_texBullet_Team2 = m_Renderer->CreatePngTexture("./Resources/Bullet_Particle_Team2.png");
 	m_texClimateParticle = m_Renderer->CreatePngTexture("./Resources/Snow_Particle.png");
@@ -306,8 +307,16 @@ void CSceneMgr::Render()
 				}
 				else if (m_Infantry[i]->GetState() == STATE_ATTACK)
 				{
-					m_Renderer->DrawTexturedRectSeq(m_Infantry[i]->GetPos().fX, m_Infantry[i]->GetPos().fY, m_Infantry[i]->GetPos().fZ, m_Infantry[i]->GetSize(),
-						m_Infantry[i]->GetColor().fR, m_Infantry[i]->GetColor().fG, m_Infantry[i]->GetColor().fB, m_Infantry[i]->GetColor().fA, m_texInfantry_Attack_Team2, m_Infantry[i]->GetSpriteX(), 0, 9, 1, RENDER_LEVEL_INFANTRY);
+					if (m_Infantry[i]->GetPos().fX > m_Infantry[i]->GetTargetPos().fX)
+					{
+						m_Renderer->DrawTexturedRectSeq(m_Infantry[i]->GetPos().fX, m_Infantry[i]->GetPos().fY, m_Infantry[i]->GetPos().fZ, m_Infantry[i]->GetSize(),
+							m_Infantry[i]->GetColor().fR, m_Infantry[i]->GetColor().fG, m_Infantry[i]->GetColor().fB, m_Infantry[i]->GetColor().fA, m_texInfantry_Attack_Team2, m_Infantry[i]->GetSpriteX(), 0, 9, 1, RENDER_LEVEL_INFANTRY);
+					}
+					else
+					{
+						m_Renderer->DrawTexturedRectSeq(m_Infantry[i]->GetPos().fX, m_Infantry[i]->GetPos().fY, m_Infantry[i]->GetPos().fZ, m_Infantry[i]->GetSize(),
+							m_Infantry[i]->GetColor().fR, m_Infantry[i]->GetColor().fG, m_Infantry[i]->GetColor().fB, m_Infantry[i]->GetColor().fA, m_texInfantry_Attack_Reverse_Team2, m_Infantry[i]->GetSpriteX(), 0, 9, 1, RENDER_LEVEL_INFANTRY);
+					}
 				}
 				m_Renderer->DrawSolidRectGauge(m_Infantry[i]->GetPos().fX, m_Infantry[i]->GetPos().fY + m_Infantry[i]->GetSize() / 2.f + m_Infantry[i]->GetSize() / 5.f, m_Infantry[i]->GetPos().fZ,
 					m_Infantry[i]->GetSize() * 1.4f, m_Infantry[i]->GetSize() / 6.f, 0.f, 0.f, 1.f, 1.f, m_Infantry[i]->GetLife() / m_Infantry[i]->GetMaxLife(), RENDER_LEVEL_INFANTRY);
